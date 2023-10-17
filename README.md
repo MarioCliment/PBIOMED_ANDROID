@@ -14,7 +14,6 @@ Este repositorio forma parte del proyecto PBIOMED (Biometría y Medio Ambiente) 
 
 - La aplicación Android puede realizar peticiones REST al servidor para guardar datos de medición.
 - Utiliza la clase `PeticionarioREST` para hacer peticiones POST al servidor en una URL específica.
-- Los datos de medición se envían al servidor en formato JSON o formulario, dependiendo de la implementación del servidor.
 
 ## Uso de la Aplicación
 
