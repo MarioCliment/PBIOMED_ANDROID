@@ -76,16 +76,4 @@
         android:layout_height="wrap_content"
         android:text="Cancelar notificacion" />
 
-    <Button
-        android:id="@+id/empezarJob"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Empezar Job" />
-
-    <Button
-        android:id="@+id/cancelarJob"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cancelar Job" />
-
 </android.widget.LinearLayout>
