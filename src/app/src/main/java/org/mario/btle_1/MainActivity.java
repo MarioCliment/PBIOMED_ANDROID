@@ -373,6 +373,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, " boton detener busqueda dispositivos BTLE Pulsado");
         this.detenerBusquedaDispositivosBTLE();
     } // ()
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
+    public void botonIrParametrosSensor(View v) {
+        Intent intent = new Intent(this, ParametrosSensorActivity.class);
+        startActivity(intent);
+    }
 
     // --------------------------------------------------------------
     // --------------------------------------------------------------
@@ -434,7 +440,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ParametrosSensorActivity parametrosSensorActivity = new ParametrosSensorActivity();
-        parametrosSensorActivity.scheduleJob();
         // Solicitar permisos BLE automáticamente al iniciar la actividad
         requestBlePermissions(this, CODIGO_PETICION_PERMISOS);
 
