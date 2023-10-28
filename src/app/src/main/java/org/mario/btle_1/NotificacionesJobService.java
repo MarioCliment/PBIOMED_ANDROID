@@ -16,6 +16,8 @@ public class NotificacionesJobService extends JobService {
     private static final String TAG = "NotificacionesJobService";
     private boolean jobCancelled = false;
     private NotificationManager notificationManager;
+    private boolean sensorFuncional = true;
+    private int medicionOzono = 90;
     static int SensorApagadoNotificacion = 1;
     static int SensorEstropeadoNotificacion = 2;
     static int ConcentracionAltaNotificacion = 3; // La notificación debe incluir fecha, hora y GPS, y hacer un sonido (en teoria hace esto ultimo)
@@ -37,17 +39,27 @@ public class NotificacionesJobService extends JobService {
             @Override
             public void run() {
                 Log.d(TAG, "Is job cancelled?: " +jobCancelled);
-                for (int i = 0; i < 10; i++) {
-                    if (jobCancelled){
-                        return;
-                    }
-                    Log.d(TAG, "Job run: " + i);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                if (jobCancelled){
+                    return;
                 }
+                if(medicionOzono > 70) {
+                    lanzarNotificacionDebil("Contaminación alta",
+                            "¡Estás en una zona de con mucho ozono!",
+                            ConcentracionAltaNotificacion);
+                    // TODO: Añadir código que manda a la base de datos la localización GPS,
+                    //  la fecha y la hora, y por supuesto, la medición del ozono
+                } else {
+                    cancelarNotificacion(ConcentracionAltaNotificacion);
+                }
+                // Si el sensor no funciona
+                if(!sensorFuncional) {
+                    lanzarNotificacionFuerte("Sonda no funcional",
+                            "La sonda no está activa. Comprueba si está apagada, sin batería, o averiada",
+                            SensorApagadoNotificacion);
+                } else {
+                    cancelarNotificacion(SensorApagadoNotificacion);
+                }
+
                 Log.d(TAG, "Job finished");
                 // params siempre se pasa, pero el boolean es para saber si deberiamos volver a empezar el método
                 // De momento lo dejaré en true
@@ -72,7 +84,7 @@ public class NotificacionesJobService extends JobService {
                             // esto cambia el texto de la notificacion
                             .setContentText(textoNotificacion)
                             // aqui se cambia la foto de la notificacion
-                            //.setSmallIcon(R.drawable.planta)
+                            .setSmallIcon(R.drawable.sans)
                             // Con el grupo agrupamos todas las notificaciones en una solapa (no se si funciona)
                             .setGroup("SuperTortosaBros")
                             .setOngoing(true)
@@ -103,7 +115,7 @@ public class NotificacionesJobService extends JobService {
                             // esto cambia el texto de la notificacion
                             .setContentText(textoNotificacion)
                             // aqui se cambia la foto de la notificacion
-                            //.setSmallIcon(R.drawable.planta)
+                            .setSmallIcon(R.drawable.andrew)
                             // Con el grupo agrupamos todas las notificaciones en una solapa (no se si funciona)
                             .setGroup("SuperTortosaBros")
                             .setOngoing(false)
@@ -115,6 +127,14 @@ public class NotificacionesJobService extends JobService {
             notificationManager.notify(idNotificacion, notificacion.build());
         } else {
             Log.d(TAG, "La version es muy vieja o algo asi");
+        }
+    }
+    private void cancelarNotificacion(int notificacionId) {
+        try {
+            Log.d(TAG, "Cancelando notificacion " + notificacionId);
+            notificationManager.cancel(notificacionId);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
