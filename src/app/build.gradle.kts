@@ -4,11 +4,11 @@ plugins {
 
 android {
     namespace = "org.mario.btle_1"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "org.mario.btle_1"
-        minSdk = 24
+        minSdk = 31
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
