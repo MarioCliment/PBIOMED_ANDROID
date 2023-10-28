@@ -16,12 +16,26 @@ public class NotificacionesJobService extends JobService {
     private static final String TAG = "NotificacionesJobService";
     private boolean jobCancelled = false;
     private NotificationManager notificationManager;
-    private boolean sensorFuncional = true;
+    private boolean sensorFuncional = false;
     private int medicionOzono = 90;
     static int SensorApagadoNotificacion = 1;
     static int SensorEstropeadoNotificacion = 2;
     static int ConcentracionAltaNotificacion = 3; // La notificación debe incluir fecha, hora y GPS, y hacer un sonido (en teoria hace esto ultimo)
     static final String CANAL_ID = "MedioambienteProyecto";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); // Inicializa el notificationManager aquí
+    }
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && "CANCELAR_NOTIFICACIONES".equals(intent.getAction())) {
+            cancelarTodasLasNotificaciones();
+        }
+        return START_NOT_STICKY;
+    }
+
     @Override
     // Se llama a esta función cuando se empieza un trabajo (creo)
     public boolean onStartJob(JobParameters jobParameters) {
@@ -137,8 +151,14 @@ public class NotificacionesJobService extends JobService {
             e.printStackTrace();
         }
     }
-
-
+    public void cancelarTodasLasNotificaciones() {
+        try {
+            Log.d(TAG, "Cancelando TODAS las notificaciones");
+            notificationManager.cancelAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     // Se llama a esta función cuando el trabajo se INTERRUMPE, no cuando termina con éxito

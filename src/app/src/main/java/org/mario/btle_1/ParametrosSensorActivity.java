@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,9 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         // Cargar el estado del Switch
         boolean switchState = loadSwitchState();
         notificacionesSwitch.setChecked(switchState);
+        if (notificacionesSwitch.isChecked()){
+            scheduleJob();
+        }
 
         notificacionesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // Guardar el estado del Switch cuando cambia
@@ -87,9 +91,17 @@ public class ParametrosSensorActivity extends AppCompatActivity {
 
 
     public void cancelJob() {
+        // Primero, cancela el trabajo programado
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        // Aquí usamos la id del job para cancelarlo...
         scheduler.cancel(123);
+
+        // Luego, envía un intent para cancelar las notificaciones
+        Intent intent = new Intent(this, NotificacionesJobService.class);
+        intent.setAction("CANCELAR_NOTIFICACIONES");
+        startService(intent);
+
         Log.d(TAG, "Job cancelled");
     }
+
+
 }
