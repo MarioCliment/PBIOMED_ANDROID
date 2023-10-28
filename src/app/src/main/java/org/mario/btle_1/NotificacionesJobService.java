@@ -24,11 +24,18 @@ public class NotificacionesJobService extends JobService {
     static final String CANAL_ID = "MedioambienteProyecto";
 
     @Override
+    // Es importante inicializar aqui el notificationManager,
+    // puesto que la funcion cancelarTodasLasNotificaciones es llamada desde otras clases
     public void onCreate() {
         super.onCreate();
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); // Inicializa el notificationManager aquí
     }
     @Override
+    // De momento, esto es para que cancelarTodasLasNotificaciones sea llamado, pero puede servir para un futuro
+    // -------------------------------------------------------------------------
+    // Intent -> onStartCommand()
+    // -------------------------------------------------------------------------
+    // Sé que onStartCommand() le entran y devuelve más cosas, pero no son cosas que yo le paso o le pido, por lo tanto, no las incluyo en el diseño
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && "CANCELAR_NOTIFICACIONES".equals(intent.getAction())) {
             cancelarTodasLasNotificaciones();
@@ -37,17 +44,23 @@ public class NotificacionesJobService extends JobService {
     }
 
     @Override
-    // Se llama a esta función cuando se empieza un trabajo (creo)
+    // Se llama a esta función cuando se empieza un trabajo
+    // -------------------------------------------------------------------------
+    // JobParameters -> onStartJob() -> boolean
+    // -------------------------------------------------------------------------
+    // Lo que tenga que ver con jobs suele devolver un true o false. Esto es simplemente si el trabajo debería empezar de nuevo cuando este acabe
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d(TAG, "Job started");
         notificationManager = (NotificationManager)
                 getSystemService(NOTIFICATION_SERVICE);
-        // Aqui empieza el "timer" y el actualizar las notificaciones
         manejarNotificaciones(jobParameters);
         return true;
     }
 
     // Esta es la función que junta el JobService y las notificaciones, así que, ¡es de suma importancia!
+    // -------------------------------------------------------------------------
+    // JobParameters -> manejarNotificaciones() -> boolean
+    // -------------------------------------------------------------------------
     private void manejarNotificaciones(JobParameters params) {
         new Thread(new Runnable() {
             @Override
@@ -83,6 +96,9 @@ public class NotificacionesJobService extends JobService {
     }
 
     // La notificacion fuerte NO la puede quitar el usuario manualmente (debe resolver el problema)
+    // -------------------------------------------------------------------------
+    // String, String, int -> lanzarNotificacionFuerte()
+    // -------------------------------------------------------------------------
     public void lanzarNotificacionFuerte(String tituloNotificacion, String textoNotificacion, int idNotificacion) {
         Log.d(TAG, "empieza la función lanzarNotificacion()");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -114,6 +130,9 @@ public class NotificacionesJobService extends JobService {
     }
 
     // La notificacion débil SÍ la puede quitar el usuario manualmente
+    // -------------------------------------------------------------------------
+    // String, String, int -> lanzarNotificacionDebil()
+    // -------------------------------------------------------------------------
     public void lanzarNotificacionDebil(String tituloNotificacion, String textoNotificacion, int idNotificacion) {
         Log.d(TAG, "empieza la función lanzarNotificacion()");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -143,6 +162,10 @@ public class NotificacionesJobService extends JobService {
             Log.d(TAG, "La version es muy vieja o algo asi");
         }
     }
+    // -------------------------------------------------------------------------
+    // int -> cancelarNotificacion()
+    // -------------------------------------------------------------------------
+    // Le pasamos un int (id) y cancela la notificacion que tiene esa id (si no está activa la notificacion, no ocurre nada)
     private void cancelarNotificacion(int notificacionId) {
         try {
             Log.d(TAG, "Cancelando notificacion " + notificacionId);
@@ -151,6 +174,11 @@ public class NotificacionesJobService extends JobService {
             e.printStackTrace();
         }
     }
+    // -------------------------------------------------------------------------
+    // cancelarTodasLasNotificaciones()
+    // -------------------------------------------------------------------------
+    // Creo que se explica sola. La llamamos para cuando apagamos las notificaciones,
+    // para que no solo dejen de llegar notificaciones, sino que además CANCELE las que están presentes
     public void cancelarTodasLasNotificaciones() {
         try {
             Log.d(TAG, "Cancelando TODAS las notificaciones");
@@ -162,6 +190,9 @@ public class NotificacionesJobService extends JobService {
 
     @Override
     // Se llama a esta función cuando el trabajo se INTERRUMPE, no cuando termina con éxito
+    // -------------------------------------------------------------------------
+    // JobParameters -> onStopJob() -> boolean
+    // -------------------------------------------------------------------------
     public boolean onStopJob(JobParameters jobParameters) {
         Log.d(TAG, "Job cancelled before completion");
         jobCancelled = true;

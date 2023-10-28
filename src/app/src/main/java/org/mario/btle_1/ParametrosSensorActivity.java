@@ -20,6 +20,10 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     private static final String PREFERENCES_NAME = "MyPreferences";
 
     @Override
+    // Al crearse la actividad, el Switch estará como el usuario lo haya dejado
+    // -------------------------------------------------------------------------
+    // Bundle -> onCreate()
+    // -------------------------------------------------------------------------
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parametros_de_sensor);
@@ -44,6 +48,10 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         });
     }
 
+    // Estas dos de abajo son funciones para guardar el estado del switch
+    // -------------------------------------------------------------------------
+    // boolean -> saveSwitchState()
+    // -------------------------------------------------------------------------
     private void saveSwitchState(boolean isChecked) {
         SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -51,10 +59,17 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    // -------------------------------------------------------------------------
+    // loadSwitchState()
+    // -------------------------------------------------------------------------
     private boolean loadSwitchState() {
         SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         return sharedPreferences.getBoolean("switch_state", false);
     }
+    // De momento se llama cuando entramos a la actividad, pero en el futuro, siempre estará activo el Job de notificaciones
+    // -------------------------------------------------------------------------
+    // scheduleJob()
+    // -------------------------------------------------------------------------
     public void scheduleJob() {
         // ¡Bah! ¡¿Me está intentando sugerir que yo podría equivocarme en mi codigo?! ¡¡¡Maldición de la supresión!!!
         @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
@@ -88,8 +103,10 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         }
     }
 
-
-
+    // Llamamos a esta función cuando apagamos el Switch de notificaciones
+    // -------------------------------------------------------------------------
+    // cancelJob()
+    // -------------------------------------------------------------------------
     public void cancelJob() {
         // Primero, cancela el trabajo programado
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
