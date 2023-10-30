@@ -2,6 +2,8 @@ package org.mario.btle_1;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.annotation.SuppressLint;
 import android.app.job.JobInfo;
@@ -12,7 +14,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
+import java.util.ArrayList;
 
 public class ParametrosSensorActivity extends AppCompatActivity {
 
@@ -46,6 +56,58 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                 cancelJob();
             }
         });
+
+        Button btnScan = findViewById(R.id.btnScan);
+
+        btnScan.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Boton del escaner pulsado ");
+                IntentIntegrator integrador = new IntentIntegrator(ParametrosSensorActivity.this);
+                integrador.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+                integrador.setPrompt("Lector - CDP");
+                integrador.setCameraId(0); //0 = camara trasera
+                integrador.setBeepEnabled(true); //sonido de alerta
+                integrador.setBarcodeImageEnabled(true); //para que lea imagenes correctamente
+                integrador.initiateScan(); //iniciar escaneo
+            }
+        });
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+
+        if (result != null){ //si hay informacion
+            if (result.getContents() == null){ // en caso de cancelar o no recibir dato
+                Toast.makeText(this, "Lectura cancelada", Toast.LENGTH_LONG).show();
+            } else { // cuando se reciba informacion
+
+                String scannedMac = result.getContents();
+
+                //ArrayList<String> macsArrayList = new ArrayList<String>();
+
+                // Comprueba si ya existe un TextView con la misma MAC como ID
+                TextView MACTextView = findViewById(R.id.txtMAC);
+
+                //condicion
+                //!macsArrayList.contains(MACTextView.getText())
+                Log.d(TAG, "macGetText:"+MACTextView.getText()+"..");
+                Log.d(TAG, "scannedmac:"+scannedMac+"..");
+
+                if (!MACTextView.getText().equals(scannedMac)) {
+                    MACTextView.setText(scannedMac);
+                    Toast.makeText(this, result.getContents(), Toast.LENGTH_SHORT).show();
+                    //macsArrayList.add(scannedMac);
+                } else {
+                    // Si ya existe un TextView con la misma MAC, muestra un mensaje al usuario
+                    Toast.makeText(this, "Ya está escaneada", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        } else { // en caso de ser null no haya problemas
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     // Estas dos de abajo son funciones para guardar el estado del switch
