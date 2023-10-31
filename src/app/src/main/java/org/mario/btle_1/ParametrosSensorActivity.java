@@ -181,6 +181,9 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // scheduleJob()
     // -------------------------------------------------------------------------
     public void scheduleJob() {
+
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
+
         // Comprueba si ya tienes permiso para notificaciones
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -196,12 +199,16 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                             dialogInterface.cancel();
                         }
                     });
+            // Desactivar Switch notificaciones
+            if (notificacionesSwitch.isChecked()){
+                notificacionesSwitch.setChecked(false);
+            }
             alertaActivarNotificaciones.show();
+
             return;
         }
         // El código de abajo se ejecutará si ya tienes permiso o después de que el usuario haya respondido a la solicitud de permiso.
 
-        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
         // Si no está checkeado, cierro la función y no se envían notificaciones
         // Ahora me queda incorporar las notificaciones a NotificacionesJobService
         if (!notificacionesSwitch.isChecked()) {
