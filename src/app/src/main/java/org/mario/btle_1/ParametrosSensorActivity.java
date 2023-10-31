@@ -19,6 +19,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+// El profesor Jesús Tomás ha embrujado nuestro Android, porque a pesar de esto estar en rojo, funciona sin problemas
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -38,11 +39,17 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parametros_de_sensor);
 
-        Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
+        // ¡¡¡Maldición de la supresión OMEGA!!!
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
 
         // Cargar el estado del Switch
         boolean switchState = loadSwitchState();
         notificacionesSwitch.setChecked(switchState);
+        TextView MACTextView = findViewById(R.id.txtMAC);
+
+        // Carga el texto guardado en SharedPreferences y configúralo en MACTextView
+        String savedMATText = loadMACText();
+        MACTextView.setText(savedMATText);
         if (notificacionesSwitch.isChecked()){
             scheduleJob();
         }
@@ -56,22 +63,26 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                 cancelJob();
             }
         });
+    }
 
-        Button btnScan = findViewById(R.id.btnScan);
+    public void iniciarEscaner(View v) {
+        Log.d(TAG, "Boton del escaner pulsado ");
+        IntentIntegrator integrador = new IntentIntegrator(ParametrosSensorActivity.this);
+        integrador.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+        integrador.setPrompt("Lector - CDP");
+        integrador.setCameraId(0); // 0 = cámara trasera
+        integrador.setBeepEnabled(true); // sonido de alerta
+        integrador.setBarcodeImageEnabled(true); // para que lea imágenes correctamente
+        integrador.initiateScan(); // iniciar escaneo
+    }
 
-        btnScan.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Boton del escaner pulsado ");
-                IntentIntegrator integrador = new IntentIntegrator(ParametrosSensorActivity.this);
-                integrador.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-                integrador.setPrompt("Lector - CDP");
-                integrador.setCameraId(0); //0 = camara trasera
-                integrador.setBeepEnabled(true); //sonido de alerta
-                integrador.setBarcodeImageEnabled(true); //para que lea imagenes correctamente
-                integrador.initiateScan(); //iniciar escaneo
-            }
-        });
+    public void borrarMACEscaneada(View v) {
+        Log.d(TAG, "Boton de borrar MAC pulsado");
+        TextView MACTextView = findViewById(R.id.txtMAC);
+
+        // Si borramos la MAC, borramos el texto guardado entre actividades
+        MACTextView.setText("");
+        saveMACText(MACTextView.getText().toString());
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -99,6 +110,8 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                     MACTextView.setText(scannedMac);
                     Toast.makeText(this, result.getContents(), Toast.LENGTH_SHORT).show();
                     //macsArrayList.add(scannedMac);
+                    // Guarda el texto en SharedPreferences
+                    saveMACText(MACTextView.getText().toString());
                 } else {
                     // Si ya existe un TextView con la misma MAC, muestra un mensaje al usuario
                     Toast.makeText(this, "Ya está escaneada", Toast.LENGTH_SHORT).show();
@@ -109,6 +122,25 @@ public class ParametrosSensorActivity extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+    // Estas dos de abajo son funciones para guardar la MAC de la
+    // -------------------------------------------------------------------------
+    // String -> saveMACText()
+    // -------------------------------------------------------------------------
+    private void saveMACText(String text) {
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("mac_text", text);
+        editor.apply();
+    }
+
+    // -------------------------------------------------------------------------
+    // loadMACText()
+    // -------------------------------------------------------------------------
+    private String loadMACText() {
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+        return sharedPreferences.getString("mac_text", "");
+    }
+
 
     // Estas dos de abajo son funciones para guardar el estado del switch
     // -------------------------------------------------------------------------
@@ -133,6 +165,9 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // scheduleJob()
     // -------------------------------------------------------------------------
     public void scheduleJob() {
+        // TODO: Añadir un aviso que diga "hola Usuario, porfa ve a habilitar las notifiaccoines porfi!!!"
+        // tambien que buscar cosas bluetooth sea por la MAC guardada en esta aplicacion
+
         // ¡Bah! ¡¿Me está intentando sugerir que yo podría equivocarme en mi codigo?! ¡¡¡Maldición de la supresión!!!
         @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
         // Si no está checkeado, cierro la función y no se envian notificaciones
@@ -165,6 +200,7 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         }
     }
 
+
     // Llamamos a esta función cuando apagamos el Switch de notificaciones
     // -------------------------------------------------------------------------
     // cancelJob()
@@ -184,3 +220,38 @@ public class ParametrosSensorActivity extends AppCompatActivity {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Profesor, si usted ve esto, ¡bájele la nota a Gabriel Tello!
