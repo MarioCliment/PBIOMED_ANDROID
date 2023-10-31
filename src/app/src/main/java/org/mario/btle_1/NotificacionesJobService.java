@@ -26,6 +26,9 @@ public class NotificacionesJobService extends JobService {
     @Override
     // Es importante inicializar aqui el notificationManager,
     // puesto que la funcion cancelarTodasLasNotificaciones es llamada desde otras clases
+    // -------------------------------------------------------------------------
+    // onCreate()
+    // -------------------------------------------------------------------------
     public void onCreate() {
         super.onCreate();
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); // Inicializa el notificationManager aquí

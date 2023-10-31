@@ -77,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ScanCallback callbackDelEscaneo = null;
 
+    // -------------------------------------------------------------------------
+    // Activity, int -> requestBlePermissions()
+    // -------------------------------------------------------------------------
     public static void requestBlePermissions(Activity activity, int requestCode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             ActivityCompat.requestPermissions(activity, ANDROID_12_BLE_PERMISSIONS, requestCode);
@@ -88,9 +91,10 @@ public class MainActivity extends AppCompatActivity {
 
     ;
 
-    // --------------------------------------------------------------
-    // --------------------------------------------------------------
-
+    // -------------------------------------------------------------------------
+    // buscarTodosLosDispositivosBTLE() -> ScanResult
+    // -------------------------------------------------------------------------
+    // Esta función no estará mucho más, es de testeo más que otra cosa
     private void buscarTodosLosDispositivosBTLE() {
         Log.d(TAG, " buscarTodosLosDispositivosBTL(): empieza ");
 
@@ -135,8 +139,9 @@ public class MainActivity extends AppCompatActivity {
 
     } // ()
 
-    // --------------------------------------------------------------
-    // --------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // ScanResult -> mostrarInformacionDispositivoBTLE()
+    // -------------------------------------------------------------------------
 
     private void mostrarInformacionDispositivoBTLE(ScanResult resultado) {
 
@@ -234,9 +239,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // --------------------------------------------------------------
-    // --------------------------------------------------------------
-
+    // -------------------------------------------------------------------------
+    // String(una MAC) -> buscarEsteDispositivoBTLE() -> ScanResult
+    // -------------------------------------------------------------------------
     private void buscarEsteDispositivoBTLE(final String dispositivoBuscado) {
         Log.d(TAG, " buscarEsteDispositivoBTLE(): empieza ");
 
@@ -328,9 +333,10 @@ public class MainActivity extends AppCompatActivity {
         this.elEscanner.startScan(this.callbackDelEscaneo);
     } // ()
 
-    // --------------------------------------------------------------
-    // --------------------------------------------------------------
-
+    // -------------------------------------------------------------------------
+    // detenerBusquedaDispositivosBTLE()
+    // -------------------------------------------------------------------------
+    // Lo que hace esta función es un COMPLETO MISTERIO!!! (¿Estará la función embrujada...?) (Mis compañeros de proyecto se mosquearán si no aviso que esto es ironía)
     private void detenerBusquedaDispositivosBTLE() {
 
         if (this.callbackDelEscaneo == null) {
@@ -439,7 +445,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ParametrosSensorActivity parametrosSensorActivity = new ParametrosSensorActivity();
         // Solicitar permisos BLE automáticamente al iniciar la actividad
         requestBlePermissions(this, CODIGO_PETICION_PERMISOS);
 
