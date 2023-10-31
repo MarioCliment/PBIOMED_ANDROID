@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.app.job.JobInfo;
@@ -11,6 +13,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -165,20 +168,29 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // scheduleJob()
     // -------------------------------------------------------------------------
     public void scheduleJob() {
-        // TODO: Añadir un aviso que diga "hola Usuario, porfa ve a habilitar las notifiaccoines porfi!!!"
-        // tambien que buscar cosas bluetooth sea por la MAC guardada en esta aplicacion
+        // Comprueba si ya tienes permiso para notificaciones
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE) != PackageManager.PERMISSION_GRANTED) {
+            // Si no tienes permiso, solicítalo
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE}, 123); // El número 123 es un identificador de solicitud, puedes cambiarlo
 
-        // ¡Bah! ¡¿Me está intentando sugerir que yo podría equivocarme en mi codigo?! ¡¡¡Maldición de la supresión!!!
+            // En este punto, se mostrará un diálogo de solicitud de permiso al usuario, y debes manejar la respuesta en onRequestPermissionsResult
+            return;
+        }
+
+        // El código de abajo se ejecutará si ya tienes permiso o después de que el usuario haya respondido a la solicitud de permiso.
+
         @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
-        // Si no está checkeado, cierro la función y no se envian notificaciones
+        // Si no está checkeado, cierro la función y no se envían notificaciones
         // Ahora me queda incorporar las notificaciones a NotificacionesJobService
-        if (!notificacionesSwitch.isChecked()){
+        if (!notificacionesSwitch.isChecked()) {
             Log.d(TAG, "schedulejob: El Switch NO está checkeado!!!");
             return;
         }
         Log.d(TAG, "scheduleJob: El Switch SI está checkeado!!!");
+
+        // Resto del código sin cambios
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        if(scheduler.getPendingJob(123) != null){
+        if (scheduler.getPendingJob(123) != null) {
             Log.d(TAG, "El job ya está activo, continuando job");
             return;
         }
@@ -186,19 +198,33 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         JobInfo info = new JobInfo.Builder(123, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
-                .setPeriodic(15 * 60 * 1000) // 15 minutos (como mínimo, si ponemos menos, simplemente nos pondrá 15 minutos automaticamente)
+                .setPeriodic(15 * 60 * 1000) // 15 minutos
                 .build();
 
-        // Este apartado nos informará de si se ha conseguido poner en marcha el trabajo
         int resultCode = scheduler.schedule(info);
         if (resultCode == JobScheduler.RESULT_SUCCESS) {
             Log.d(TAG, "Job scheduled successfully ");
-        }
-        else{
-            // no deberia ocurrir
+        } else {
             Log.d(TAG, "Job scheduling failed");
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 123) { // Aquí 123 es el identificador que usamos para solicitar el permiso
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // El usuario ha otorgado el permiso, puedes continuar con el código que debe ejecutarse después de obtener el permiso.
+                scheduleJob();
+            } else {
+                // El usuario denegó el permiso, puedes mostrar un mensaje o tomar alguna acción en consecuencia.
+                Log.d(TAG, "Permiso de notificación denegado");
+                // TODO: Aqui mostrar un aviso que diga "Porfavor habilita manualmente las notificaciones!!!"
+            }
+        }
+    }
+
 
 
     // Llamamos a esta función cuando apagamos el Switch de notificaciones
