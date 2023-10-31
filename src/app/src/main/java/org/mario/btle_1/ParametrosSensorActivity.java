@@ -1,5 +1,6 @@
 package org.mario.btle_1;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -8,9 +9,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -68,6 +71,9 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         });
     }
 
+    // -------------------------------------------------------------------------
+    // iniciarEscaner()
+    // -------------------------------------------------------------------------
     public void iniciarEscaner(View v) {
         Log.d(TAG, "Boton del escaner pulsado ");
         IntentIntegrator integrador = new IntentIntegrator(ParametrosSensorActivity.this);
@@ -77,8 +83,12 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         integrador.setBeepEnabled(true); // sonido de alerta
         integrador.setBarcodeImageEnabled(true); // para que lea imágenes correctamente
         integrador.initiateScan(); // iniciar escaneo
+        // Esta funcion llama, en este momento, a onActivityResult()
     }
 
+    // -------------------------------------------------------------------------
+    // borrarMACEscaneada()
+    // -------------------------------------------------------------------------
     public void borrarMACEscaneada(View v) {
         Log.d(TAG, "Boton de borrar MAC pulsado");
         TextView MACTextView = findViewById(R.id.txtMAC);
@@ -88,6 +98,9 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         saveMACText(MACTextView.getText().toString());
     }
 
+    // -------------------------------------------------------------------------
+    // int(que le pides), int(resultado), Intent -> onActivityResult()
+    // -------------------------------------------------------------------------
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
@@ -125,7 +138,7 @@ public class ParametrosSensorActivity extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-    // Estas dos de abajo son funciones para guardar la MAC de la
+    // Estas dos de abajo son funciones para guardar la MAC de la sonda en un TextView
     // -------------------------------------------------------------------------
     // String -> saveMACText()
     // -------------------------------------------------------------------------
@@ -169,14 +182,23 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // -------------------------------------------------------------------------
     public void scheduleJob() {
         // Comprueba si ya tienes permiso para notificaciones
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE) != PackageManager.PERMISSION_GRANTED) {
-            // Si no tienes permiso, solicítalo
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE}, 123); // El número 123 es un identificador de solicitud, puedes cambiarlo
 
-            // En este punto, se mostrará un diálogo de solicitud de permiso al usuario, y debes manejar la respuesta en onRequestPermissionsResult
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if(!notificationManager.areNotificationsEnabled()){
+            Log.e(TAG, "Permiso de notificación denegado, cancelando scheludeJob()");
+            // TODO: Aqui mostrar un aviso que diga "Porfavor habilita manualmente las notificaciones!!!"
+            AlertDialog.Builder alertaActivarNotificaciones = new AlertDialog.Builder(ParametrosSensorActivity.this);
+            alertaActivarNotificaciones.setMessage("Tiene las notificaciones desactivadas, porfavor, actívelas manualmente desde la app Ajustes")
+                    .setCancelable(false)
+                    .setNeutralButton("Entendido", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+            alertaActivarNotificaciones.show();
             return;
         }
-
         // El código de abajo se ejecutará si ya tienes permiso o después de que el usuario haya respondido a la solicitud de permiso.
 
         @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
@@ -208,24 +230,6 @@ public class ParametrosSensorActivity extends AppCompatActivity {
             Log.d(TAG, "Job scheduling failed");
         }
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == 123) { // Aquí 123 es el identificador que usamos para solicitar el permiso
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // El usuario ha otorgado el permiso, puedes continuar con el código que debe ejecutarse después de obtener el permiso.
-                scheduleJob();
-            } else {
-                // El usuario denegó el permiso, puedes mostrar un mensaje o tomar alguna acción en consecuencia.
-                Log.d(TAG, "Permiso de notificación denegado");
-                // TODO: Aqui mostrar un aviso que diga "Porfavor habilita manualmente las notificaciones!!!"
-            }
-        }
-    }
-
-
 
     // Llamamos a esta función cuando apagamos el Switch de notificaciones
     // -------------------------------------------------------------------------
