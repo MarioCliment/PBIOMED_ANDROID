@@ -65,18 +65,6 @@
         android:text="MensajeServidor" />
 
     <Button
-        android:id="@+id/mandarNotificacion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Enviar notificacion" />
-
-    <Button
-        android:id="@+id/cancelarNotificacion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cancelar notificacion" />
-
-    <Button
         android:id="@+id/ParametrosButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
