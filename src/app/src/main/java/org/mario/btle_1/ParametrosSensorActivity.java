@@ -56,19 +56,54 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         // Carga el texto guardado en SharedPreferences y configúralo en MACTextView
         String savedMATText = loadMACText();
         MACTextView.setText(savedMATText);
+
+        // No necesitamos de momento este código, el servicio se debería iniciar con
+        // 1.- La vinculación de una sonda
+        // 2.- Activar las notificaciones
+        /*
         if (notificacionesSwitch.isChecked()){
             scheduleJob();
-        }
+        }*/
 
         notificacionesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // Guardar el estado del Switch cuando cambia
             saveSwitchState(isChecked);
             if (isChecked) {
-                scheduleJob();
+                if(hayMACVinculada()){
+                    scheduleJob();
+                } else {
+                    // Desactivamos el switch...
+                    desactivarSwitchNotificaciones();
+                    // Y creamos una alerta al usuario de que no hay ninguna sonda vinculada
+                    AlertDialog.Builder alertaNoHaySondaVinculada = new AlertDialog.Builder(ParametrosSensorActivity.this);
+                    alertaNoHaySondaVinculada.setMessage("No hay ninguna sonda vinculada, porfavor, vincule su sonda con el botón Vincular Sonda ")
+                            .setCancelable(false)
+                            .setNeutralButton("Entendido", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            });
+                    alertaNoHaySondaVinculada.show();
+
+                }
             } else {
                 cancelJob();
             }
         });
+    }
+
+    public boolean hayMACVinculada() {
+        TextView MACTextView = findViewById(R.id.txtMAC);
+        // Si MACTextView tiene texto, devuelve true, en caso contrario, devuelve false
+        if(MACTextView.getText() != ""){
+            Log.d(TAG, "hayMACVinculada: ");
+            return true;
+        } else {
+            Log.d(TAG, "NOhayMACVinculada: ");
+            return false;
+        }
+
     }
 
     // -------------------------------------------------------------------------
@@ -176,6 +211,14 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         return sharedPreferences.getBoolean("switch_state", false);
     }
+
+    public void desactivarSwitchNotificaciones(){
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
+        // Desactivar Switch notificaciones
+        if (notificacionesSwitch.isChecked()){
+            notificacionesSwitch.setChecked(false);
+        }
+    }
     // De momento se llama cuando entramos a la actividad, pero en el futuro, siempre estará activo el Job de notificaciones
     // -------------------------------------------------------------------------
     // scheduleJob()
@@ -199,10 +242,7 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                             dialogInterface.cancel();
                         }
                     });
-            // Desactivar Switch notificaciones
-            if (notificacionesSwitch.isChecked()){
-                notificacionesSwitch.setChecked(false);
-            }
+            desactivarSwitchNotificaciones();
             alertaActivarNotificaciones.show();
 
             return;

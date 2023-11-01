@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:onClick="iniciarEscaner"
-        android:text="Vincular Placa"
+        android:text="Vincular Sonda"
         app:layout_constraintStart_toStartOf="@+id/notificacionesSwitch"
         app:layout_constraintTop_toBottomOf="@+id/notificacionesSwitch" />
 
