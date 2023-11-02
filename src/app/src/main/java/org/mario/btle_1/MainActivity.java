@@ -24,6 +24,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
 
-    private String server = "http://192.168.1.133:80/prueba/rest/guardarMedicion.php";
+    private String server = "http://192.168.1.133:80/prueba/rest/";
 
     private TextView elTexto;
 
@@ -280,10 +283,22 @@ public class MainActivity extends AppCompatActivity {
                         String tiempo = obtenerFechaConFormato();
 
                         // Crear los datos de la solicitud
-                        String data = "tiempo=" + tiempo +"&temperatura=" + temperatura + "&concentracion=" + concentracion;
+                        //String data = "tiempo=" + tiempo +"&temperatura=" + temperatura + "&concentracion=" + concentracion;
+
+                        JSONObject objeto = new JSONObject();
+                        try {
+                            objeto.put("tiempo", tiempo);
+                            objeto.put("temperatura", temperatura);
+                            objeto.put("concentracion", concentracion);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                        String data = objeto.toString();
+
+                        String server_especifico= server+ "guardarMedicion.php";
 
                         PeticionarioREST elPeticionario = new PeticionarioREST();
-                        elPeticionario.hacerPeticionREST("POST", server, data,
+                        elPeticionario.hacerPeticionREST("POST", server_especifico, data,
                                 new PeticionarioREST.RespuestaREST() {
                                     @Override
                                     public void callback(int codigo, String cuerpo) {
