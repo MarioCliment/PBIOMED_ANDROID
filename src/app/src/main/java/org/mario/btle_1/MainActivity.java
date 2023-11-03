@@ -267,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                 //mostrarInformacionDispositivoBTLE(resultado);
 
                 // AQUI ES CUANDO FILTRAMOS Y ENCONTRAMOS NUESTRO DISPOSITIVO
+                Log.d(TAG, "MAC DE ZAIDA ES: " + bluetoothDevice.getAddress());
                 if (Objects.equals(bluetoothDevice.getAddress(), dispositivoBuscado)) {
                     scanTextView.setText("Escaneo con éxito");
                     Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo " +dispositivoBuscado+ " encontrado");
@@ -383,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, " boton nuestro dispositivo BTLE Pulsado");
         //this.buscarEsteDispositivoBTLE( Utilidades.stringToUUID( "EPSG-GTI-PROY-3A" ) );
         //this.buscarEsteDispositivoBTLE( "VECTOR_GP77_13V" );
-        this.buscarEsteDispositivoBTLE( "D2:5C:EB:10:7A:80" );
+        this.buscarEsteDispositivoBTLE( "F0:11:67:82:89:CB" );
         //this.buscarEsteDispositivoBTLE("fistro");
 
     } // ()
