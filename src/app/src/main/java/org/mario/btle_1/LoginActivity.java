@@ -20,7 +20,7 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private String server = "http://192.168.1.133:80/pruebaRESTful/rest/";
+    private String server = "http://192.168.1.133:80/ozonewarden/rest/";
 
     private String server_especifico = server + "hacerLogin.php";
 
