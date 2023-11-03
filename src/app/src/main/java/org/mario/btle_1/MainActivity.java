@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
 
-    private String server = "http://192.168.1.133:80/ozonewarden/rest/";
+    private String server = "http://192.168.88.7:80/ozonewarden/rest/";
 
     private TextView elTexto;
 
