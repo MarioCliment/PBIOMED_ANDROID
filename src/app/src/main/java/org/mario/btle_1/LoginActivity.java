@@ -29,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText user;
     Button loginBtn;
 
+    TextView registrar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,11 +38,10 @@ public class LoginActivity extends AppCompatActivity {
         user = findViewById(R.id.usuario);
         password = findViewById(R.id.contrasenya);
         loginBtn = findViewById(R.id.botonLogin);
+        registrar = findViewById(R.id.irRegistrar);
 
         loginBtn.setOnClickListener(v->hacerLogin());
-
-        TextView textView = findViewById(R.id.irRegistrar);
-
+        registrar.setOnClickListener(v->irRegistro());
         // Texto completo
         String textoCompleto = "¿No tienes cuenta? Registrate";
 
@@ -55,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         spannableString.setSpan(new ForegroundColorSpan(Color.BLUE), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         // Establecer el texto formateado en el TextView
-        textView.setText(spannableString);
+        registrar.setText(spannableString);
     }
 
     void hacerLogin(){
@@ -104,5 +105,8 @@ public class LoginActivity extends AppCompatActivity {
 
     void irMainActivity(){
         startActivity(new Intent(this, MainActivity.class));
+    }
+    void irRegistro(){
+        startActivity(new Intent(this, RegistrarseActivity.class));
     }
 }
