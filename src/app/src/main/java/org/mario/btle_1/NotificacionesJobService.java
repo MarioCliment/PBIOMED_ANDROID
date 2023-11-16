@@ -1,15 +1,39 @@
 package org.mario.btle_1;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.PersistableBundle;
 import android.util.Log;
+import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.TimeZone;
 
 public class NotificacionesJobService extends JobService {
 
@@ -23,6 +47,27 @@ public class NotificacionesJobService extends JobService {
     static int ConcentracionAltaNotificacion = 3; // La notificación debe incluir fecha, hora y GPS, y hacer un sonido (en teoria hace esto ultimo)
     static final String CANAL_ID = "MedioambienteProyecto";
 
+
+    // Para el scan bluetooth -----------------------------------------------
+    private String MAC_BUSCADA = "F0:11:67:82:89:CB";
+
+    private ObjetoDeDosEnteros ValoresGuardados;
+
+    private int concentracion;
+
+    private int temperatura;
+
+    private boolean enviado = false;
+
+    private BluetoothLeScanner elEscanner;
+
+    private ScanCallback callbackDelEscaneo = null;
+
+
+    private String server = "http://192.168.88.7:80/ozonewarden/rest/";
+
+
+    @SuppressLint("MissingPermission")
     @Override
     // Es importante inicializar aqui el notificationManager,
     // puesto que la funcion cancelarTodasLasNotificaciones es llamada desde otras clases
@@ -31,6 +76,11 @@ public class NotificacionesJobService extends JobService {
     // -------------------------------------------------------------------------
     public void onCreate() {
         super.onCreate();
+        BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
+        // MALDICION DE LA SUPRESION!!! bta.enable() puede que de problemitas je!
+        bta.enable();
+        this.elEscanner = bta.getBluetoothLeScanner();
+
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); // Inicializa el notificationManager aquí
     }
     @Override
@@ -56,8 +106,34 @@ public class NotificacionesJobService extends JobService {
         Log.d(TAG, "Job started");
         notificationManager = (NotificationManager)
                 getSystemService(NOTIFICATION_SERVICE);
-        manejarNotificaciones(jobParameters);
+        PersistableBundle infoExtraJob = jobParameters.getExtras();
+
+        // Primero recopilamos info
+        hayQueMoverElCacharro(jobParameters);
+
+        if(infoExtraJob.getBoolean("Notificaciones")){
+            manejarNotificaciones(jobParameters);
+        }
         return true;
+    }
+
+
+    private void hayQueMoverElCacharro(JobParameters params) {
+        // Hmm... He de mover el cacharro, ¡si señor!
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Is job cancelled?: " +jobCancelled);
+                if (jobCancelled){
+                    return;
+                }
+                buscarEsteDispositivoBTLE(MAC_BUSCADA);
+                Log.d(TAG, "Job finished");
+                // params siempre se pasa, pero el boolean es para saber si deberiamos volver a empezar el método
+                // De momento lo dejaré en true
+                jobFinished(params, true);
+            }
+        }).start();
     }
 
     // Esta es la función que junta el JobService y las notificaciones, así que, ¡es de suma importancia!
@@ -190,6 +266,211 @@ public class NotificacionesJobService extends JobService {
             e.printStackTrace();
         }
     }
+
+    // -------------------------------------------------------------------------
+    // ScanResult -> mostrarInformacionDispositivoBTLE()
+    // -------------------------------------------------------------------------
+
+    private void mostrarInformacionDispositivoBTLE(ScanResult resultado) {
+
+        BluetoothDevice bluetoothDevice = resultado.getDevice();
+        byte[] bytes = resultado.getScanRecord().getBytes();
+        int rssi = resultado.getRssi();
+
+        Log.d(TAG, " ****************************************************");
+        Log.d(TAG, " ****** DISPOSITIVO DETECTADO BTLE ****************** ");
+        Log.d(TAG, " ****************************************************");
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, " mostrarInformacionDispositivoBTLE(): CONNECT FAILURE! ");
+            return;
+        }
+
+        Log.d(TAG, " mostrarInformacionDispositivoBTLE(): CONNECT READY! ");
+        Log.d(TAG, " nombre = " + bluetoothDevice.getName());
+        Log.d(TAG, " toString = " + bluetoothDevice.toString());
+
+        /*
+        ParcelUuid[] puuids = bluetoothDevice.getUuids();
+        if ( puuids.length >= 1 ) {
+            //Log.d(TAG, " uuid = " + puuids[0].getUuid());
+           // Log.d(TAG, " uuid = " + puuids[0].toString());
+        }*/
+
+        Log.d(TAG, " dirección = " + bluetoothDevice.getAddress());
+        Log.d(TAG, " rssi = " + rssi);
+
+        Log.d(TAG, " bytes = " + new String(bytes));
+        Log.d(TAG, " bytes (" + bytes.length + ") = " + Utilidades.bytesToHexString(bytes));
+
+        TramaIBeacon tib = new TramaIBeacon(bytes);
+
+        Log.d(TAG, " ----------------------------------------------------");
+        Log.d(TAG, " prefijo  = " + Utilidades.bytesToHexString(tib.getPrefijo()));
+        Log.d(TAG, "          advFlags = " + Utilidades.bytesToHexString(tib.getAdvFlags()));
+        Log.d(TAG, "          advHeader = " + Utilidades.bytesToHexString(tib.getAdvHeader()));
+        Log.d(TAG, "          companyID = " + Utilidades.bytesToHexString(tib.getCompanyID()));
+        Log.d(TAG, "          iBeacon type = " + Integer.toHexString(tib.getiBeaconType()));
+        Log.d(TAG, "          iBeacon length 0x = " + Integer.toHexString(tib.getiBeaconLength()) + " ( "
+                + tib.getiBeaconLength() + " ) ");
+        Log.d(TAG, " uuid  = " + Utilidades.bytesToHexString(tib.getUUID()));
+        Log.d(TAG, " uuid  = " + Utilidades.bytesToString(tib.getUUID()));
+        Log.d(TAG, " major  = " + Utilidades.bytesToHexString(tib.getMajor()) + "( "
+                + Utilidades.bytesToInt(tib.getMajor()) + " ) ");
+        Log.d(TAG, " minor  = " + Utilidades.bytesToHexString(tib.getMinor()) + "( "
+                + Utilidades.bytesToInt(tib.getMinor()) + " ) ");
+        Log.d(TAG, " txPower  = " + Integer.toHexString(tib.getTxPower()) + " ( " + tib.getTxPower() + " )");
+        Log.d(TAG, " ****************************************************");
+
+
+        // Bytes de major y minor
+        int major = Utilidades.bytesToInt(tib.getMajor());
+        int minor = Utilidades.bytesToInt(tib.getMinor());
+
+        ValoresGuardados = new ObjetoDeDosEnteros( major, minor);
+
+    } // ()
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
+
+
+    // --------------------------------------------------------------
+    //  obtenerFechaConFormato() --> String
+    // --------------------------------------------------------------
+    @SuppressLint("SimpleDateFormat")
+    public static String obtenerFechaConFormato() {
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        SimpleDateFormat sdf;
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        return sdf.format(date);
+    }
+
+
+    // -------------------------------------------------------------------------
+    // String(una MAC) -> buscarEsteDispositivoBTLE() -> ScanResult
+    // -------------------------------------------------------------------------
+    private void buscarEsteDispositivoBTLE(final String dispositivoBuscado) {
+        Log.d(TAG, " buscarEsteDispositivoBTLE(): empieza ");
+
+        Log.d(TAG, "  buscarEsteDispositivoBTLE(): instalamos scan callback ");
+
+
+        // super.onScanResult(ScanSettings.SCAN_MODE_LOW_LATENCY, result); para ahorro de energía
+
+        this.callbackDelEscaneo = new ScanCallback() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onScanResult(int callbackType, ScanResult resultado) {
+                super.onScanResult(callbackType, resultado);
+                Log.d(TAG, "  buscarEsteDispositivoBTLE(): onScanResult() ");
+
+                BluetoothDevice bluetoothDevice = resultado.getDevice();
+                Log.d(TAG, " buscarEsteDispositivoBTLE():  ¿dispositivoBuscado = " + dispositivoBuscado + " equivale a bluetoothDevice.getName() = "+ bluetoothDevice.getName() + " ?");
+                // Este mostrarInformacion es para hacer debugging
+                //mostrarInformacionDispositivoBTLE(resultado);
+
+                // AQUI ES CUANDO FILTRAMOS Y ENCONTRAMOS NUESTRO DISPOSITIVO
+                Log.d(TAG, "MAC DE ZAIDA ES: " + bluetoothDevice.getAddress());
+                if (Objects.equals(bluetoothDevice.getAddress(), dispositivoBuscado)) {
+                    Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo " +dispositivoBuscado+ " encontrado");
+                    mostrarInformacionDispositivoBTLE(resultado);;
+
+
+                    if(ValoresGuardados.getID() == 11){
+                        concentracion = ValoresGuardados.getVALOR();
+                        enviado = false;
+                    }
+                    else if(ValoresGuardados.getID() == 12 && enviado == false){
+                        temperatura = ValoresGuardados.getVALOR();
+
+                        String tiempo = obtenerFechaConFormato();
+
+                        // Crear los datos de la solicitud
+                        //String data = "tiempo=" + tiempo +"&temperatura=" + temperatura + "&concentracion=" + concentracion;
+
+                        JSONObject objeto = new JSONObject();
+                        try {
+                            objeto.put("tiempo", tiempo);
+                            objeto.put("temperatura", temperatura);
+                            objeto.put("concentracion", concentracion);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                        String data = objeto.toString();
+
+                        String server_especifico= server+ "guardarMedicion.php";
+
+                        PeticionarioREST elPeticionario = new PeticionarioREST();
+                        elPeticionario.hacerPeticionREST("POST", server_especifico, data,
+                                new PeticionarioREST.RespuestaREST() {
+                                    @Override
+                                    public void callback(int codigo, String cuerpo) {
+                                        String text = "codigo respuesta= " + codigo + "<-> \n" + cuerpo;
+                                        Log.d(TAG, "callback: "+text);
+
+                                    }
+                                });
+                        enviado = true;
+                    }
+
+
+                } else {
+                    Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo no encontrado");
+                    //detenerBusquedaDispositivosBTLE();
+                }
+            }
+
+            @Override
+            public void onBatchScanResults(List<ScanResult> results) {
+                super.onBatchScanResults(results);
+                Log.d(TAG, "  buscarEsteDispositivoBTLE(): onBatchScanResults() ");
+
+            }
+
+            @Override
+            public void onScanFailed(int errorCode) {
+                super.onScanFailed(errorCode);
+                Log.d(TAG, "  buscarEsteDispositivoBTLE(): onScanFailed() ");
+
+            }
+        };
+
+        ScanFilter sf = new ScanFilter.Builder().setDeviceName(dispositivoBuscado).build();
+
+        Log.d(TAG, "  buscarEsteDispositivoBTLE(): empezamos a escanear buscando: " + dispositivoBuscado);
+        //Log.d(TAG, "  buscarEsteDispositivoBTLE(): empezamos a escanear buscando: " + dispositivoBuscado
+        //      + " -> " + Utilidades.stringToUUID( dispositivoBuscado ) );
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, " buscarEsteDispositivoBTLE(): SCAN FAILURE! ");
+            return;
+        }
+        Log.d(TAG, " buscarEsteDispositivoBTLE(): SCAN READY! ");
+        this.elEscanner.startScan(this.callbackDelEscaneo);
+    } // ()
+
+    // -------------------------------------------------------------------------
+    // detenerBusquedaDispositivosBTLE()
+    // -------------------------------------------------------------------------
+    // Lo que hace esta función es un COMPLETO MISTERIO!!! (¿Estará la función embrujada...?) (Mis compañeros de proyecto se mosquearán si no aviso que esto es ironía)
+    private void detenerBusquedaDispositivosBTLE() {
+
+        if (this.callbackDelEscaneo == null) {
+            return;
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, " detenerBusquedaDispositivosBTLE(): SCAN FAILURE! ");
+            return;
+        }
+        Log.d(TAG, " detenerBusquedaDispositivosBTLE(): SCAN READY! ");
+        this.elEscanner.stopScan(this.callbackDelEscaneo);
+        this.callbackDelEscaneo = null;
+
+    } // ()
+
 
     @Override
     // Se llama a esta función cuando el trabajo se INTERRUMPE, no cuando termina con éxito
