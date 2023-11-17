@@ -2,7 +2,6 @@ package org.mario.btle_1;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,11 +18,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.PersistableBundle;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,17 +32,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
 
-public class NotificacionesJobService extends JobService {
+import kotlinx.coroutines.Job;
+
+public class BackgroundJobService extends JobService {
 
     private static final String TAG = "NotificacionesJobService";
     private boolean jobCancelled = false;
     private NotificationManager notificationManager;
     private boolean sensorFuncional = false;
-    private int medicionOzono = 90;
+    private int medicionOzono = 0;
     static int SensorApagadoNotificacion = 1;
     static int SensorEstropeadoNotificacion = 2;
     static int ConcentracionAltaNotificacion = 3; // La notificación debe incluir fecha, hora y GPS, y hacer un sonido (en teoria hace esto ultimo)
     static final String CANAL_ID = "MedioambienteProyecto";
+    private int contadorFuncionamientoSonda = 0;
 
 
     // Para el scan bluetooth -----------------------------------------------
@@ -90,8 +90,10 @@ public class NotificacionesJobService extends JobService {
     // -------------------------------------------------------------------------
     // Sé que onStartCommand() le entran y devuelve más cosas, pero no son cosas que yo le paso o le pido, por lo tanto, no las incluyo en el diseño
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && "CANCELAR_NOTIFICACIONES".equals(intent.getAction())) {
+        if (intent != null && "CANCELAR_TODO".equals(intent.getAction())) {
+            Log.i(TAG, "cancelarTodo: cancelando!!! ");
             cancelarTodasLasNotificaciones();
+            detenerBusquedaDispositivosBTLE();
         }
         return START_NOT_STICKY;
     }
@@ -125,6 +127,7 @@ public class NotificacionesJobService extends JobService {
             public void run() {
                 Log.d(TAG, "Is job cancelled?: " +jobCancelled);
                 if (jobCancelled){
+                    detenerBusquedaDispositivosBTLE();
                     return;
                 }
                 buscarEsteDispositivoBTLE(MAC_BUSCADA);
@@ -144,13 +147,20 @@ public class NotificacionesJobService extends JobService {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                // hacemos que duerma 5 segundos para que le de tiempo a mi MIERDa de codigo a leer correctamente si la sonda es funcional o no
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 Log.d(TAG, "Is job cancelled?: " +jobCancelled);
                 if (jobCancelled){
                     return;
                 }
-                if(medicionOzono > 70) {
+                // Esto es temporal, no se si habrá una condición
+                if(medicionOzono != -1) {
                     lanzarNotificacionDebil("Contaminación alta",
-                            "¡Estás en una zona de con mucho ozono!",
+                            "¡Estás en una zona de con mucho ozono! " + medicionOzono,
                             ConcentracionAltaNotificacion);
                     // TODO: Añadir código que manda a la base de datos la localización GPS,
                     //  la fecha y la hora, y por supuesto, la medición del ozono
@@ -193,7 +203,7 @@ public class NotificacionesJobService extends JobService {
                             // esto cambia el texto de la notificacion
                             .setContentText(textoNotificacion)
                             // aqui se cambia la foto de la notificacion
-                            .setSmallIcon(R.drawable.sans)
+                            .setSmallIcon(R.drawable.andrew)
                             // Con el grupo agrupamos todas las notificaciones en una solapa (no se si funciona)
                             .setGroup("SuperTortosaBros")
                             .setOngoing(true)
@@ -326,6 +336,8 @@ public class NotificacionesJobService extends JobService {
         int major = Utilidades.bytesToInt(tib.getMajor());
         int minor = Utilidades.bytesToInt(tib.getMinor());
 
+        // TODO: Cambiar medicionOzono por el valor actual de la medicion
+
         ValoresGuardados = new ObjetoDeDosEnteros( major, minor);
 
     } // ()
@@ -365,7 +377,6 @@ public class NotificacionesJobService extends JobService {
             public void onScanResult(int callbackType, ScanResult resultado) {
                 super.onScanResult(callbackType, resultado);
                 Log.d(TAG, "  buscarEsteDispositivoBTLE(): onScanResult() ");
-
                 BluetoothDevice bluetoothDevice = resultado.getDevice();
                 Log.d(TAG, " buscarEsteDispositivoBTLE():  ¿dispositivoBuscado = " + dispositivoBuscado + " equivale a bluetoothDevice.getName() = "+ bluetoothDevice.getName() + " ?");
                 // Este mostrarInformacion es para hacer debugging
@@ -374,12 +385,15 @@ public class NotificacionesJobService extends JobService {
                 // AQUI ES CUANDO FILTRAMOS Y ENCONTRAMOS NUESTRO DISPOSITIVO
                 Log.d(TAG, "MAC DE ZAIDA ES: " + bluetoothDevice.getAddress());
                 if (Objects.equals(bluetoothDevice.getAddress(), dispositivoBuscado)) {
+                    yeLaSondaNoFunciona(true);
                     Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo " +dispositivoBuscado+ " encontrado");
                     mostrarInformacionDispositivoBTLE(resultado);;
 
 
                     if(ValoresGuardados.getID() == 11){
                         concentracion = ValoresGuardados.getVALOR();
+                        // Aqui guardamos la medicion
+                        medicionOzono = concentracion;
                         enviado = false;
                     }
                     else if(ValoresGuardados.getID() == 12 && enviado == false){
@@ -418,6 +432,7 @@ public class NotificacionesJobService extends JobService {
 
                 } else {
                     Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo no encontrado");
+                    yeLaSondaNoFunciona(false);
                     //detenerBusquedaDispositivosBTLE();
                 }
             }
@@ -471,6 +486,21 @@ public class NotificacionesJobService extends JobService {
 
     } // ()
 
+    private void yeLaSondaNoFunciona(boolean funciona) {
+        Log.d(TAG, "yeLaSondaNoFunciona: sensorFuncional = " + sensorFuncional);
+        if(funciona) {
+            contadorFuncionamientoSonda = 0;
+            sensorFuncional = true;
+        } else {
+            Log.d(TAG, "yeLaSondaNoFunciona: contadorFuncionamientoSonda = " + contadorFuncionamientoSonda);
+            if(contadorFuncionamientoSonda >= 5) {
+                sensorFuncional = false;
+            } else{
+                contadorFuncionamientoSonda++;
+            }
+        }
+    }
+
 
     @Override
     // Se llama a esta función cuando el trabajo se INTERRUMPE, no cuando termina con éxito
@@ -479,6 +509,7 @@ public class NotificacionesJobService extends JobService {
     // -------------------------------------------------------------------------
     public boolean onStopJob(JobParameters jobParameters) {
         Log.d(TAG, "Job cancelled before completion");
+        detenerBusquedaDispositivosBTLE();
         jobCancelled = true;
         return true;
     }

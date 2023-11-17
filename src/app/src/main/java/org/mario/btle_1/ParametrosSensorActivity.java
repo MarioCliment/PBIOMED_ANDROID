@@ -111,7 +111,10 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         notificacionesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // Guardar el estado del Switch cuando cambia
             saveSwitchState(isChecked);
-                if(hayMACVinculada()){
+            if (isChecked) {
+                if (hayMACVinculada()) {
+                    // TODO: Tengo que cambiar que esto vaya asi, las notificaciones ahora se cambian desde los ajustes
+                    // TODO: del telefono
                     scheduleJob(isChecked);
                 } else {
                     // Desactivamos el switch...
@@ -127,9 +130,14 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                                 }
                             });
                     alertaNoHaySondaVinculada.show();
+                    // Puede que este cancelJob no sea necesario...
                     cancelJob();
-
                 }
+
+
+            }else{
+                cancelJob();
+            }
 
         });
     }
@@ -310,7 +318,7 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         PersistableBundle infoParaJob = new PersistableBundle();
         infoParaJob.putBoolean("Notificaciones", notificacionesActivas);
 
-        ComponentName componentName = new ComponentName(this, NotificacionesJobService.class);
+        ComponentName componentName = new ComponentName(this, BackgroundJobService.class);
         JobInfo info = new JobInfo.Builder(123, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
@@ -336,8 +344,8 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         scheduler.cancel(123);
 
         // Luego, envía un intent para cancelar las notificaciones
-        Intent intent = new Intent(this, NotificacionesJobService.class);
-        intent.setAction("CANCELAR_NOTIFICACIONES");
+        Intent intent = new Intent(this, BackgroundJobService.class);
+        intent.setAction("CANCELAR_TODO");
         startService(intent);
 
         Log.d(TAG, "Job cancelled");
