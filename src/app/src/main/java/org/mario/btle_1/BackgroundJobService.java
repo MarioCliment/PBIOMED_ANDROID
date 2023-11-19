@@ -380,16 +380,13 @@ public class BackgroundJobService extends JobService {
                 BluetoothDevice bluetoothDevice = resultado.getDevice();
                 Log.d(TAG, " buscarEsteDispositivoBTLE():  ¿dispositivoBuscado = " + dispositivoBuscado + " equivale a bluetoothDevice.getName() = "+ bluetoothDevice.getName() + " ?");
                 // Este mostrarInformacion es para hacer debugging
-                //mostrarInformacionDispositivoBTLE(resultado);
-
+                // mostrarInformacionDispositivoBTLE(resultado);
                 // AQUI ES CUANDO FILTRAMOS Y ENCONTRAMOS NUESTRO DISPOSITIVO
                 Log.d(TAG, "MAC DE ZAIDA ES: " + bluetoothDevice.getAddress());
                 if (Objects.equals(bluetoothDevice.getAddress(), dispositivoBuscado)) {
                     yeLaSondaNoFunciona(true);
                     Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo " +dispositivoBuscado+ " encontrado");
-                    mostrarInformacionDispositivoBTLE(resultado);;
-
-
+                    mostrarInformacionDispositivoBTLE(resultado);
                     if(ValoresGuardados.getID() == 11){
                         concentracion = ValoresGuardados.getVALOR();
                         // Aqui guardamos la medicion
