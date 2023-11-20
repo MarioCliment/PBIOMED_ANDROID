@@ -58,4 +58,21 @@
         app:layout_constraintStart_toStartOf="@+id/btnScan"
         app:layout_constraintTop_toBottomOf="@+id/btnScan" />
 
+    <TextView
+        android:id="@+id/explicacionTextView"
+        android:layout_width="297dp"
+        android:layout_height="96dp"
+        android:layout_marginTop="104dp"
+        android:text="Por favor, active manualmente las notificaciones desde los Ajustes de su teléfono para esta aplicación, si no, no recibirá avisos sobre su sonda"
+        app:layout_constraintStart_toStartOf="@+id/btnScan"
+        app:layout_constraintTop_toBottomOf="@+id/btnScan" />
+
+    <TextView
+        android:id="@+id/explicacionTextView2"
+        android:layout_width="297dp"
+        android:layout_height="96dp"
+        android:text="Para poder recibir datos de la sonda, la aplicación ha de permanecer abierta en segundo plano"
+        app:layout_constraintStart_toStartOf="@+id/explicacionTextView"
+        app:layout_constraintTop_toBottomOf="@+id/explicacionTextView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
