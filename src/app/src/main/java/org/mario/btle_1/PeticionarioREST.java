@@ -3,6 +3,8 @@ package org.mario.btle_1;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -61,11 +63,12 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
 
             Log.d("clienterestandroid", "doInBackground() me conecto a >" + urlDestino + "<");
 
-            URL url = new URL(urlDestino);
+            URL url = new URL(urlDestino+"?user=mario.climent&password=1234");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty( "Content-Type", "application/json; charset-utf-8" );
             connection.setRequestMethod(this.elMetodo);
+
             // connection.setRequestProperty("Accept", "*/*);
 
             // connection.setUseCaches(false);
@@ -80,6 +83,11 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
                 dos.writeBytes(this.elCuerpo);
                 dos.flush();
                 dos.close();
+            } else {
+                Log.d("clienterestandroid", "doInBackground(): entro al else");
+                connection.addRequestProperty("user","mario.climent");
+                connection.addRequestProperty("password","1234");
+                Log.d("clienterestandroid", "doInBackground(): lo que hay" + connection);
             }
 
             // ya he enviado la peticion

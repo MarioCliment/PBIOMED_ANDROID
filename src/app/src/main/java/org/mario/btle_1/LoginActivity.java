@@ -20,7 +20,7 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private String server = "http://192.168.88.7:80/ozonewarden/rest/";
+    private String server = "http://192.168.45.7:80/ozonewarden/rest/";
 
     private String server_especifico = server + "hacerLogin.php";
 
@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
 
         //String data = "?user="+userS+"&password="+passwordS;
 
-        JSONObject objeto = new JSONObject();
+        /*JSONObject objeto = new JSONObject();
         try {
             objeto.put("user", userS);
             objeto.put("password", passwordS);
@@ -77,6 +77,36 @@ public class LoginActivity extends AppCompatActivity {
 
         PeticionarioREST elPeticionario = new PeticionarioREST();
         elPeticionario.hacerPeticionREST("POST", server_especifico, data,
+                new PeticionarioREST.RespuestaREST() {
+                    @Override
+                    public void callback(int codigo, String cuerpo) {
+                        String jsonString = cuerpo;
+                        try {
+                            // Convierte la cadena JSON en un objeto JSON
+                            JSONObject jsonObject = new JSONObject(jsonString);
+
+                            // Extrae datos específicos del objeto JSON
+                            resultado = jsonObject.getBoolean("resultado");
+                            Log.d("resultado",""+resultado);
+                            if (resultado == true){
+                                irMainActivity();
+                            }
+
+                            // Haz algo con los datos extraídos
+                            // Por ejemplo, muestra los datos en una vista
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            // Maneja errores de análisis JSON aquí
+                        }
+                    }
+                });
+    }*/
+
+        String data = "?user="+userS+"&password="+passwordS;
+
+        PeticionarioREST elPeticionario = new PeticionarioREST();
+        elPeticionario.hacerPeticionREST("GET", server_especifico, data,
                 new PeticionarioREST.RespuestaREST() {
                     @Override
                     public void callback(int codigo, String cuerpo) {
