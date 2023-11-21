@@ -19,7 +19,7 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private String server = "http://192.168.88.7:80/ozonewarden/rest/";
+    private String server = "http://192.168.45.7:80/ozonewarden/rest/";
 
     private String server_especifico = server + "hacerLogin.php";
 
@@ -29,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     Button loginBtn;
     Button skipLoginBtn;
 
+    TextView registrar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.contrasenya);
         loginBtn = findViewById(R.id.botonLogin);
         skipLoginBtn = findViewById(R.id.evilButton);
+        registrar = findViewById(R.id.irRegistrar);
 
         loginBtn.setOnClickListener(v->hacerLogin());
         skipLoginBtn.setOnClickListener(v->irMainActivity());
@@ -44,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.irRegistrar);
 
+        registrar.setOnClickListener(v->irRegistro());
         // Texto completo
         String textoCompleto = "¿No tienes cuenta? Registrate";
 
@@ -58,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         spannableString.setSpan(new ForegroundColorSpan(Color.BLUE), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         // Establecer el texto formateado en el TextView
-        textView.setText(spannableString);
+        registrar.setText(spannableString);
     }
 
     void hacerLogin(){
@@ -68,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
 
         //String data = "?user="+userS+"&password="+passwordS;
 
-        JSONObject objeto = new JSONObject();
+        /*JSONObject objeto = new JSONObject();
         try {
             objeto.put("user", userS);
             objeto.put("password", passwordS);
@@ -103,10 +107,43 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }*/
+
+        String data = "?user="+userS+"&password="+passwordS;
+
+        PeticionarioREST elPeticionario = new PeticionarioREST();
+        elPeticionario.hacerPeticionREST("GET", server_especifico, data,
+                new PeticionarioREST.RespuestaREST() {
+                    @Override
+                    public void callback(int codigo, String cuerpo) {
+                        String jsonString = cuerpo;
+                        try {
+                            // Convierte la cadena JSON en un objeto JSON
+                            JSONObject jsonObject = new JSONObject(jsonString);
+
+                            // Extrae datos específicos del objeto JSON
+                            resultado = jsonObject.getBoolean("resultado");
+                            Log.d("resultado",""+resultado);
+                            if (resultado == true){
+                                irMainActivity();
+                            }
+
+                            // Haz algo con los datos extraídos
+                            // Por ejemplo, muestra los datos en una vista
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            // Maneja errores de análisis JSON aquí
+                        }
+                    }
+                });
     }
 
     void irMainActivity(){
         startActivity(new Intent(this, MainActivity.class));
     }
 
+    void irRegistro(){
+        startActivity(new Intent(this, RegistrarseActivity.class));
+    }
 }
