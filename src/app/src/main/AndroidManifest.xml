@@ -65,7 +65,7 @@
         </activity>
 
         <service
-            android:name=".NotificacionesJobService"
+            android:name=".BackgroundJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 

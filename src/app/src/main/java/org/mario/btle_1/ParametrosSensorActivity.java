@@ -2,25 +2,27 @@ package org.mario.btle_1;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.le.BluetoothLeScanner;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,12 +31,29 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.util.ArrayList;
-
 public class ParametrosSensorActivity extends AppCompatActivity {
 
     private final static String TAG = "ParametrosSensorActivity";
     private static final String PREFERENCES_NAME = "MyPreferences";
+
+    private static final int CODIGO_PETICION_PERMISOS = 11223344;
+    private static final int REQUEST_CODE_BLUETOOTH_SCAN = 3;
+    private static final int REQUEST_CODE_BLUETOOTH_CONNECT = 5;
+
+
+    private static final String[] BLE_PERMISSIONS = new String[]{
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+    };
+
+    private static final String[] ANDROID_12_BLE_PERMISSIONS = new String[]{
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+    };
+
+
+
 
     @Override
     // Al crearse la actividad, el Switch estará como el usuario lo haya dejado
@@ -45,12 +64,15 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parametros_de_sensor);
 
+
+
+        Log.d(TAG, " onCreate(): termina ");
         // ¡¡¡Maldición de la supresión OMEGA!!!
-        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch sondaSwitch = findViewById(R.id.sondaSwitch);
 
         // Cargar el estado del Switch
         boolean switchState = loadSwitchState();
-        notificacionesSwitch.setChecked(switchState);
+        sondaSwitch.setChecked(switchState);
         TextView MACTextView = findViewById(R.id.txtMAC);
 
         // Carga el texto guardado en SharedPreferences y configúralo en MACTextView
@@ -61,15 +83,18 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         // 1.- La vinculación de una sonda
         // 2.- Activar las notificaciones
         /*
-        if (notificacionesSwitch.isChecked()){
+        if (sondaSwitch.isChecked()){
             scheduleJob();
         }*/
 
-        notificacionesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
+        sondaSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // Guardar el estado del Switch cuando cambia
             saveSwitchState(isChecked);
             if (isChecked) {
-                if(hayMACVinculada()){
+                if (hayMACVinculada()) {
+                    // TODO: Tengo que cambiar que esto vaya asi, las notificaciones ahora se cambian desde los ajustes
+                    // TODO: del telefono
                     scheduleJob();
                 } else {
                     // Desactivamos el switch...
@@ -85,11 +110,15 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                                 }
                             });
                     alertaNoHaySondaVinculada.show();
-
+                    // Puede que este cancelJob no sea necesario...
+                    cancelJob();
                 }
-            } else {
+
+
+            } else{
                 cancelJob();
             }
+
         });
     }
 
@@ -213,7 +242,7 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     }
 
     public void desactivarSwitchNotificaciones(){
-        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.sondaSwitch);
         // Desactivar Switch notificaciones
         if (notificacionesSwitch.isChecked()){
             notificacionesSwitch.setChecked(false);
@@ -225,14 +254,14 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // -------------------------------------------------------------------------
     public void scheduleJob() {
 
-        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
-
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch sondaSwitch = findViewById(R.id.sondaSwitch);
+        requestBlePermissions(this, CODIGO_PETICION_PERMISOS);
+        inicializarBlueTooth();
         // Comprueba si ya tienes permiso para notificaciones
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if(!notificationManager.areNotificationsEnabled()){
-            Log.e(TAG, "Permiso de notificación denegado, cancelando scheludeJob()");
-            // TODO: Aqui mostrar un aviso que diga "Porfavor habilita manualmente las notificaciones!!!"
+            Log.e(TAG, "Permiso de notificación denegado, no habrán notificaciones");
             AlertDialog.Builder alertaActivarNotificaciones = new AlertDialog.Builder(ParametrosSensorActivity.this);
             alertaActivarNotificaciones.setMessage("Tiene las notificaciones desactivadas, porfavor, actívelas manualmente desde la app Ajustes")
                     .setCancelable(false)
@@ -242,16 +271,11 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                             dialogInterface.cancel();
                         }
                     });
-            desactivarSwitchNotificaciones();
             alertaActivarNotificaciones.show();
-
-            return;
         }
-        // El código de abajo se ejecutará si ya tienes permiso o después de que el usuario haya respondido a la solicitud de permiso.
-
         // Si no está checkeado, cierro la función y no se envían notificaciones
         // Ahora me queda incorporar las notificaciones a NotificacionesJobService
-        if (!notificacionesSwitch.isChecked()) {
+        if (!sondaSwitch.isChecked()) {
             Log.d(TAG, "schedulejob: El Switch NO está checkeado!!!");
             return;
         }
@@ -263,7 +287,8 @@ public class ParametrosSensorActivity extends AppCompatActivity {
             Log.d(TAG, "El job ya está activo, continuando job");
             return;
         }
-        ComponentName componentName = new ComponentName(this, NotificacionesJobService.class);
+
+        ComponentName componentName = new ComponentName(this, BackgroundJobService.class);
         JobInfo info = new JobInfo.Builder(123, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
@@ -288,13 +313,127 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         scheduler.cancel(123);
 
         // Luego, envía un intent para cancelar las notificaciones
-        Intent intent = new Intent(this, NotificacionesJobService.class);
-        intent.setAction("CANCELAR_NOTIFICACIONES");
+        Intent intent = new Intent(this, BackgroundJobService.class);
+        intent.setAction("CANCELAR_TODO");
         startService(intent);
 
         Log.d(TAG, "Job cancelled");
     }
 
+    private void requestBluetoothScan() {
+        String[] permissions = new String[0];
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            permissions = new String[]{android.Manifest.permission.BLUETOOTH_SCAN};
+            requestPermissions(permissions, REQUEST_CODE_BLUETOOTH_SCAN);
+        }
+        else {
+            Log.d(TAG, " Permiso Scan Denegado");
+        }
+    }
+
+    private void requestBluetoothConnect() {
+        String[] permissions = new String[0];
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            permissions = new String[]{android.Manifest.permission.BLUETOOTH_CONNECT};
+            requestPermissions(permissions, REQUEST_CODE_BLUETOOTH_CONNECT);
+
+        }
+        else {
+            Log.d(TAG, " Permiso Connetc Denegado");
+        }
+    }
+
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult( requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case CODIGO_PETICION_PERMISOS:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.d(TAG, " onRequestPermissionResult(): permisos concedidos  !!!!");
+                    // Permission is granted. Continue the action or workflow
+                    // in your app.
+                }  else {
+
+                    Log.d(TAG, " onRequestPermissionResult(): Socorro: permisos NO concedidos  !!!!");
+                    requestBlePermissions(this, CODIGO_PETICION_PERMISOS);
+
+                }
+                return;
+        }
+        // Other 'case' lines to check for other
+        // permissions this app might request.
+    } // ()
+
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
+
+    private void inicializarBlueTooth() {
+        Log.d(TAG, " inicializarBlueTooth(): obtenemos adaptador BT ");
+
+        BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
+
+        Log.d(TAG, " inicializarBlueTooth(): habilitamos adaptador BT ");
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, " inicializarBlueTooth(): CONNECT FAILURE! ");
+
+            requestBlePermissions(this, CODIGO_PETICION_PERMISOS);
+            requestBluetoothConnect();
+            return;
+        }
+        Log.d(TAG, " inicializarBlueTooth(): CONNECT READY! ");
+        bta.enable();
+
+        Log.d(TAG, " inicializarBlueTooth(): habilitado =  " + bta.isEnabled() );
+
+        Log.d(TAG, " inicializarBlueTooth(): estado =  " + bta.getState() );
+
+        Log.d(TAG, " inicializarBlueTooth(): obtenemos escaner btle ");
+
+        BluetoothLeScanner elEscanner = bta.getBluetoothLeScanner();
+
+        if ( elEscanner == null ) {
+            Log.d(TAG, " inicializarBlueTooth(): Socorro: NO hemos obtenido escaner btle  !!!!");
+
+        }
+
+        Log.d(TAG, " inicializarBlueTooth(): voy a perdir permisos (si no los tuviera) !!!!");
+
+        if (
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED
+                        || ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED
+                        || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        )
+        {
+            ActivityCompat.requestPermissions(
+                    ParametrosSensorActivity.this,
+                    new String[]{android.Manifest.permission.BLUETOOTH, android.Manifest.permission.BLUETOOTH_ADMIN, android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    CODIGO_PETICION_PERMISOS);
+        }
+        else {
+            Log.d(TAG, " inicializarBlueTooth(): parece que YA tengo los permisos necesarios !!!!");
+
+        }
+    } // ()
+
+    // -------------------------------------------------------------------------
+    // Activity, int -> requestBlePermissions()
+    // -------------------------------------------------------------------------
+    public static void requestBlePermissions(Activity activity, int requestCode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ActivityCompat.requestPermissions(activity, ANDROID_12_BLE_PERMISSIONS, requestCode);
+        } else {
+            ActivityCompat.requestPermissions(activity, BLE_PERMISSIONS, requestCode);
+        }
+    }
 
 }
 
