@@ -384,6 +384,10 @@ public class BackgroundJobService extends JobService {
             @Override
             public void onScanResult(int callbackType, ScanResult resultado) {
                 super.onScanResult(callbackType, resultado);
+                if(jobCancelled) {
+                    Log.d(TAG, "Detener scaneo porque se acabo el trabajo");
+                    return;
+                }
                 Log.d(TAG, "  buscarEsteDispositivoBTLE(): onScanResult() ");
                 BluetoothDevice bluetoothDevice = resultado.getDevice();
                 Log.d(TAG, " buscarEsteDispositivoBTLE():  ¿dispositivoBuscado = " + dispositivoBuscado + " equivale a bluetoothDevice.getName() = "+ bluetoothDevice.getName() + " ?");
