@@ -100,6 +100,7 @@ public class BackgroundJobService extends JobService {
                         throw new RuntimeException(e);
                     }
                     Log.i(TAG, "cancelarTodo: cancelando!!! ");
+                    jobCancelled = true;
                     cancelarTodasLasNotificaciones();
                     detenerBusquedaDispositivosBTLE();
                 }
