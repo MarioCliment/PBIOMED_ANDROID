@@ -2,9 +2,6 @@ package org.mario.btle_1;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -15,11 +12,7 @@ import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,7 +23,6 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,17 +30,6 @@ import android.widget.Toast;
 // El profesor Jesús Tomás ha embrujado nuestro Android, porque a pesar de esto estar en rojo, funciona sin problemas
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
 
 public class ParametrosSensorActivity extends AppCompatActivity {
 
@@ -58,7 +39,6 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     private static final int CODIGO_PETICION_PERMISOS = 11223344;
     private static final int REQUEST_CODE_BLUETOOTH_SCAN = 3;
     private static final int REQUEST_CODE_BLUETOOTH_CONNECT = 5;
-    private BluetoothLeScanner elEscanner;
 
 
     private static final String[] BLE_PERMISSIONS = new String[]{
@@ -88,11 +68,11 @@ public class ParametrosSensorActivity extends AppCompatActivity {
 
         Log.d(TAG, " onCreate(): termina ");
         // ¡¡¡Maldición de la supresión OMEGA!!!
-        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch sondaSwitch = findViewById(R.id.sondaSwitch);
 
         // Cargar el estado del Switch
         boolean switchState = loadSwitchState();
-        notificacionesSwitch.setChecked(switchState);
+        sondaSwitch.setChecked(switchState);
         TextView MACTextView = findViewById(R.id.txtMAC);
 
         // Carga el texto guardado en SharedPreferences y configúralo en MACTextView
@@ -103,19 +83,19 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         // 1.- La vinculación de una sonda
         // 2.- Activar las notificaciones
         /*
-        if (notificacionesSwitch.isChecked()){
+        if (sondaSwitch.isChecked()){
             scheduleJob();
         }*/
 
 
-        notificacionesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        sondaSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // Guardar el estado del Switch cuando cambia
             saveSwitchState(isChecked);
             if (isChecked) {
                 if (hayMACVinculada()) {
                     // TODO: Tengo que cambiar que esto vaya asi, las notificaciones ahora se cambian desde los ajustes
                     // TODO: del telefono
-                    scheduleJob(isChecked);
+                    scheduleJob();
                 } else {
                     // Desactivamos el switch...
                     desactivarSwitchNotificaciones();
@@ -135,7 +115,7 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                 }
 
 
-            }else{
+            } else{
                 cancelJob();
             }
 
@@ -262,7 +242,7 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     }
 
     public void desactivarSwitchNotificaciones(){
-        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.sondaSwitch);
         // Desactivar Switch notificaciones
         if (notificacionesSwitch.isChecked()){
             notificacionesSwitch.setChecked(false);
@@ -272,17 +252,16 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // -------------------------------------------------------------------------
     // scheduleJob()
     // -------------------------------------------------------------------------
-    public void scheduleJob(boolean notificacionesActivas) {
+    public void scheduleJob() {
 
-        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch notificacionesSwitch = findViewById(R.id.notificacionesSwitch);
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch sondaSwitch = findViewById(R.id.sondaSwitch);
         requestBlePermissions(this, CODIGO_PETICION_PERMISOS);
         inicializarBlueTooth();
         // Comprueba si ya tienes permiso para notificaciones
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if(!notificationManager.areNotificationsEnabled()){
-            Log.e(TAG, "Permiso de notificación denegado, cancelando scheludeJob()");
-            // TODO: Aqui mostrar un aviso que diga "Porfavor habilita manualmente las notificaciones!!!"
+            Log.e(TAG, "Permiso de notificación denegado, no habrán notificaciones");
             AlertDialog.Builder alertaActivarNotificaciones = new AlertDialog.Builder(ParametrosSensorActivity.this);
             alertaActivarNotificaciones.setMessage("Tiene las notificaciones desactivadas, porfavor, actívelas manualmente desde la app Ajustes")
                     .setCancelable(false)
@@ -292,16 +271,11 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                             dialogInterface.cancel();
                         }
                     });
-            desactivarSwitchNotificaciones();
             alertaActivarNotificaciones.show();
-
-            return;
         }
-        // El código de abajo se ejecutará si ya tienes permiso o después de que el usuario haya respondido a la solicitud de permiso.
-
         // Si no está checkeado, cierro la función y no se envían notificaciones
         // Ahora me queda incorporar las notificaciones a NotificacionesJobService
-        if (!notificacionesSwitch.isChecked()) {
+        if (!sondaSwitch.isChecked()) {
             Log.d(TAG, "schedulejob: El Switch NO está checkeado!!!");
             return;
         }
@@ -314,16 +288,11 @@ public class ParametrosSensorActivity extends AppCompatActivity {
             return;
         }
 
-        // Aquí le pasamos info extra a NotificacionesJobService
-        PersistableBundle infoParaJob = new PersistableBundle();
-        infoParaJob.putBoolean("Notificaciones", notificacionesActivas);
-
         ComponentName componentName = new ComponentName(this, BackgroundJobService.class);
         JobInfo info = new JobInfo.Builder(123, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
                 .setPeriodic(15 * 60 * 1000) // 15 minutos
-                .setExtras(infoParaJob)
                 .build();
 
         int resultCode = scheduler.schedule(info);
@@ -429,9 +398,9 @@ public class ParametrosSensorActivity extends AppCompatActivity {
 
         Log.d(TAG, " inicializarBlueTooth(): obtenemos escaner btle ");
 
-        this.elEscanner = bta.getBluetoothLeScanner();
+        BluetoothLeScanner elEscanner = bta.getBluetoothLeScanner();
 
-        if ( this.elEscanner == null ) {
+        if ( elEscanner == null ) {
             Log.d(TAG, " inicializarBlueTooth(): Socorro: NO hemos obtenido escaner btle  !!!!");
 
         }

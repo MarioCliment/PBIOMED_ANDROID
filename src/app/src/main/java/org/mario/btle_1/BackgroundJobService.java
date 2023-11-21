@@ -91,9 +91,20 @@ public class BackgroundJobService extends JobService {
     // Sé que onStartCommand() le entran y devuelve más cosas, pero no son cosas que yo le paso o le pido, por lo tanto, no las incluyo en el diseño
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && "CANCELAR_TODO".equals(intent.getAction())) {
-            Log.i(TAG, "cancelarTodo: cancelando!!! ");
-            cancelarTodasLasNotificaciones();
-            detenerBusquedaDispositivosBTLE();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Log.i(TAG, "cancelarTodo: cancelando!!! ");
+                    cancelarTodasLasNotificaciones();
+                    detenerBusquedaDispositivosBTLE();
+                }
+            }).start();
+
         }
         return START_NOT_STICKY;
     }
@@ -108,14 +119,11 @@ public class BackgroundJobService extends JobService {
         Log.d(TAG, "Job started");
         notificationManager = (NotificationManager)
                 getSystemService(NOTIFICATION_SERVICE);
-        PersistableBundle infoExtraJob = jobParameters.getExtras();
-
-        // Primero recopilamos info
+        // Esto maneja los datos del scan
         hayQueMoverElCacharro(jobParameters);
 
-        if(infoExtraJob.getBoolean("Notificaciones")){
-            manejarNotificaciones(jobParameters);
-        }
+        // Esto maneja las notificaciones (tiene un delay de 5 segundos)
+        manejarNotificaciones(jobParameters);
         return true;
     }
 
@@ -149,7 +157,7 @@ public class BackgroundJobService extends JobService {
             public void run() {
                 // hacemos que duerma 5 segundos para que le de tiempo a mi MIERDa de codigo a leer correctamente si la sonda es funcional o no
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -470,6 +478,7 @@ public class BackgroundJobService extends JobService {
     private void detenerBusquedaDispositivosBTLE() {
 
         if (this.callbackDelEscaneo == null) {
+            Log.d(TAG, " detenerBusquedaDispositivosBTLE(): SCAN NULL! ");
             return;
         }
 
@@ -478,6 +487,13 @@ public class BackgroundJobService extends JobService {
             return;
         }
         Log.d(TAG, " detenerBusquedaDispositivosBTLE(): SCAN READY! ");
+
+        // TODO: Mario, tu "stopScan" no podría parar un puño aunque quisiera,
+        //      se ejecuta este código (comprobado porque detenerBusquedaDispositivosBTLE(): SCAN READY! sale en el logcat)
+        //      pero no se para el scaneo, la unica manera de detenerlo es cerrando la app por completo
+        //      ...
+        //      He probado un poco, la primera vez que se llama a esta funcion dice SCAN NULL!
+        //      Si te sirve de algo...
         this.elEscanner.stopScan(this.callbackDelEscaneo);
         this.callbackDelEscaneo = null;
 

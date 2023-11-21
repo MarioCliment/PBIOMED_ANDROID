@@ -20,12 +20,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
-        android:id="@+id/notificacionesSwitch"
+        android:id="@+id/sondaSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="150dp"
         android:height="49dp"
-        android:text="Notificaciones"
+        android:text="Recibir scan"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/titleTextView"
         app:layout_constraintTop_toTopOf="parent" />
@@ -37,8 +37,8 @@
         android:layout_marginTop="32dp"
         android:onClick="iniciarEscaner"
         android:text="Vincular Sonda"
-        app:layout_constraintStart_toStartOf="@+id/notificacionesSwitch"
-        app:layout_constraintTop_toBottomOf="@+id/notificacionesSwitch" />
+        app:layout_constraintStart_toStartOf="@+id/sondaSwitch"
+        app:layout_constraintTop_toBottomOf="@+id/sondaSwitch" />
 
     <Button
         android:id="@+id/deleteBtn"
