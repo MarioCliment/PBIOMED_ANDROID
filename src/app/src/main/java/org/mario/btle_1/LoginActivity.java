@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText password;
     EditText user;
     Button loginBtn;
+    Button skipLoginBtn;
 
     TextView registrar;
 
@@ -40,9 +40,15 @@ public class LoginActivity extends AppCompatActivity {
         user = findViewById(R.id.usuario);
         password = findViewById(R.id.contrasenya);
         loginBtn = findViewById(R.id.botonLogin);
+        skipLoginBtn = findViewById(R.id.evilButton);
         registrar = findViewById(R.id.irRegistrar);
 
         loginBtn.setOnClickListener(v->hacerLogin());
+        skipLoginBtn.setOnClickListener(v->irMainActivity());
+
+
+        TextView textView = findViewById(R.id.irRegistrar);
+
         registrar.setOnClickListener(v->irRegistro());
         // Texto completo
         String textoCompleto = "¿No tienes cuenta? Registrate";
@@ -108,6 +114,7 @@ public class LoginActivity extends AppCompatActivity {
     void irMainActivity(){
         startActivity(new Intent(this, MainActivity.class));
     }
+
     void irRegistro(){
         startActivity(new Intent(this, RegistrarseActivity.class));
     }
