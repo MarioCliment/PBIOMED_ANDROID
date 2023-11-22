@@ -20,7 +20,9 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private String server = "http://192.168.45.7:80/ozonewarden/rest/";
+    //private String server = "http://192.168.45.7:80/ozonewarden/rest/"; //MOVIL MAYRO
+
+    private String server = "http://192.168.1.140:80/ozonewarden/rest/";  //CASA MAYRO
 
     private String server_especifico = server + "hacerLogin.php";
 
@@ -66,44 +68,15 @@ public class LoginActivity extends AppCompatActivity {
 
         //String data = "?user="+userS+"&password="+passwordS;
 
-        /*JSONObject objeto = new JSONObject();
+        JSONObject objeto = new JSONObject();
         try {
-            objeto.put("user", userS);
-            objeto.put("password", passwordS);
+            objeto.put("nickname", userS);
+            objeto.put("contrasenya", passwordS);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
         String data = objeto.toString();
 
-        PeticionarioREST elPeticionario = new PeticionarioREST();
-        elPeticionario.hacerPeticionREST("POST", server_especifico, data,
-                new PeticionarioREST.RespuestaREST() {
-                    @Override
-                    public void callback(int codigo, String cuerpo) {
-                        String jsonString = cuerpo;
-                        try {
-                            // Convierte la cadena JSON en un objeto JSON
-                            JSONObject jsonObject = new JSONObject(jsonString);
-
-                            // Extrae datos específicos del objeto JSON
-                            resultado = jsonObject.getBoolean("resultado");
-                            Log.d("resultado",""+resultado);
-                            if (resultado == true){
-                                irMainActivity();
-                            }
-
-                            // Haz algo con los datos extraídos
-                            // Por ejemplo, muestra los datos en una vista
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            // Maneja errores de análisis JSON aquí
-                        }
-                    }
-                });
-    }*/
-
-        String data = "?user="+userS+"&password="+passwordS;
 
         PeticionarioREST elPeticionario = new PeticionarioREST();
         elPeticionario.hacerPeticionREST("GET", server_especifico, data,
@@ -121,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                             if (resultado == true){
                                 irMainActivity();
                             }
-
                             // Haz algo con los datos extraídos
                             // Por ejemplo, muestra los datos en una vista
 

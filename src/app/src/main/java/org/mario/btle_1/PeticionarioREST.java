@@ -3,7 +3,8 @@ package org.mario.btle_1;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -12,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Iterator;
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
@@ -57,36 +60,63 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
         Log.d("clienterestandroid", "doInBackground()");
 
         try {
-
             // envio la peticion
+            if (this.elMetodo.equals("GET") &&  this.elCuerpo != null){
+                Log.d("clienterestandroid", "Es GET y con datos");
+                urlDestino = urlDestino +"?";
+                try {
+                    Log.d("clienterestandroid", "Convierto el String a JSONObject");
+                    JSONObject objeto = new JSONObject(this.elCuerpo);
+
+                    // Obtener las claves del objeto JSON
+                    Iterator<String> keys = objeto.keys();
+                    Log.d("clienterestandroid", "Empiezo a Iterar con los valores");
+                    // Iterar sobre las claves usando un bucle foreach
+                    while (keys.hasNext()) {
+                        //Obtenemos los valores y los guardamos
+                        String clave = keys.next();
+                        String valor = objeto.getString(clave);
+                        Log.d("clienterestandroid", ("Clave:" + clave + ", Valor: " + valor));
+
+                        // Añadir los valores a una URL
+                        urlDestino = urlDestino + (clave + "=" + URLEncoder.encode(valor, "UTF-8") + "&");
+                    }
+
+                    // Lógica para eliminar el último "&"
+                    urlDestino = urlDestino.substring(0, urlDestino.length() - 1);
+
+
+                } catch (JSONException e) {
+                    Log.d("clienterestandroid", "ERROR: "+e);
+                    e.printStackTrace();
+                }
+            }
+            else if (this.elMetodo.equals("GET")){
+                Log.d("clienterestandroid", "El GET no tiene nada");
+            }
 
 
             Log.d("clienterestandroid", "doInBackground() me conecto a >" + urlDestino + "<");
 
-            URL url = new URL(urlDestino+"?user=mario.climent&password=1234");
+            URL url = new URL(urlDestino);
+
+            url.equals(urlDestino);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty( "Content-Type", "application/json; charset-utf-8" );
             connection.setRequestMethod(this.elMetodo);
-
-            // connection.setRequestProperty("Accept", "*/*);
-
-            // connection.setUseCaches(false);
             connection.setDoInput(true);
 
             if ( ! this.elMetodo.equals("GET") && this.elCuerpo != null ) {
                 Log.d("clienterestandroid", "doInBackground(): no es get, pongo cuerpo");
                 connection.setDoOutput(true);
-                // si no es GET, pongo el cuerpo que me den en la peticin
+                // si no es GET, pongo el cuerpo que me den en la peticion
                 DataOutputStream dos = new DataOutputStream (connection.getOutputStream());
                 Log.d("clienterestandroid", "doInBackground(): cuerpo" + this.elCuerpo);
                 dos.writeBytes(this.elCuerpo);
                 dos.flush();
                 dos.close();
             } else {
-                Log.d("clienterestandroid", "doInBackground(): entro al else");
-                connection.addRequestProperty("user","mario.climent");
-                connection.addRequestProperty("password","1234");
                 Log.d("clienterestandroid", "doInBackground(): lo que hay" + connection);
             }
 
@@ -141,6 +171,7 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
         Log.d("clienterestandroid", "onPostExecute() comoFue = " + comoFue);
         this.laRespuesta.callback(this.codigoRespuesta, this.cuerpoRespuesta);
     }
+
 
 } // class
 
