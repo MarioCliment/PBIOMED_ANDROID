@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -22,6 +23,11 @@ public class RegistrarseActivity extends AppCompatActivity {
     private boolean resultado = false;
 
     EditText password;
+
+    EditText editTextTextPassword2;
+    EditText correo;
+    EditText nombre;
+
     EditText user;
 
     Button loginBtn;
@@ -31,19 +37,34 @@ public class RegistrarseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registrarse);
 
-        user = findViewById(R.id.usuario);
+        correo = findViewById(R.id.usuario);
+        editTextTextPassword2 = findViewById(R.id.editTextTextPassword2);
+        user = findViewById(R.id.nickname);
+        nombre = findViewById(R.id.nombre);
         password = findViewById(R.id.contrasenya);
         loginBtn = findViewById(R.id.botonLogin);
 
-        loginBtn.setOnClickListener(v->hacerRegistro());
+        loginBtn.setOnClickListener(v->registrarUsuario());
+    }
+
+    public void registrarUsuario() {
+        String email = this.correo.getText().toString().trim();
+        String password = this.password.getText().toString();
+        if (validateData(email, password, this.editTextTextPassword2.getText().toString())) {
+            hacerRegistro();
+        }
     }
 
     void hacerRegistro(){
         String userS = this.user.getText().toString().trim();
+        String nombreS = this.nombre.getText().toString().trim();
+        String emailS = this.correo.getText().toString().trim();
         String passwordS = this.password.getText().toString();
 
         JSONObject objeto = new JSONObject();
         try {
+            objeto.put("email", emailS);
+            objeto.put("nombreApellidos", nombreS);
             objeto.put("nikcname", userS);
             objeto.put("contrasenya", passwordS);
         } catch (JSONException e) {
@@ -77,5 +98,19 @@ public class RegistrarseActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+    public boolean validateData(String email, String password, String confirmPassword) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            this.correo.setError("El email no es valido");
+            return false;
+        } else if (password.length() < 6) {
+            this.password.setError("La contraseña es muy corta");
+            return false;
+        } else if (password.equals(confirmPassword)) {
+            return true;
+        } else {
+            this.editTextTextPassword2.setError("Las contraseñas no coinciden");
+            return false;
+        }
     }
 }
