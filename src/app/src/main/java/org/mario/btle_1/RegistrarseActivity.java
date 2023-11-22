@@ -12,9 +12,13 @@ import org.json.JSONObject;
 
 public class RegistrarseActivity extends AppCompatActivity {
 
-    private String server = "http://192.168.88.7:80/ozonewarden/rest/";
+    //private String server = "http://192.168.88.7:80/PBI0MED_SERVIDOR/rest/"; // MOVIL MAYRO
 
-    private String server_registro = server + "usuario";
+    private String server = "http://192.168.1.140:80/PBI0MED_SERVIDOR/src/rest/index.php"; // CASA MAYRO
+
+
+
+    private String server_registro = server + "/user/add";
     private boolean resultado = false;
 
     EditText password;
@@ -40,8 +44,8 @@ public class RegistrarseActivity extends AppCompatActivity {
 
         JSONObject objeto = new JSONObject();
         try {
-            objeto.put("user", userS);
-            objeto.put("password", passwordS);
+            objeto.put("nikcname", userS);
+            objeto.put("contrasenya", passwordS);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
