@@ -1,7 +1,10 @@
 package org.mario.btle_1;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -86,6 +89,17 @@ public class RegistrarseActivity extends AppCompatActivity {
                             Log.d("resultado",""+resultado);
                             if (resultado == true){
                                 Log.d("registro","Registrado con éxito");
+                                AlertDialog.Builder registroExitoso = new AlertDialog.Builder(RegistrarseActivity.this);
+                                registroExitoso.setMessage("Se ha registrado con éxito")
+                                        .setCancelable(false)
+                                        .setNeutralButton("Entendido", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialogInterface.cancel();
+                                            }
+                                        });
+                                registroExitoso.show();
+                                IrALoginActivity();
                             }
 
                             // Haz algo con los datos extraídos
@@ -98,6 +112,11 @@ public class RegistrarseActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void IrALoginActivity() {
+        startActivity(new Intent(this, LoginActivity.class));
+    }
+
     public boolean validateData(String email, String password, String confirmPassword) {
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             this.correo.setError("El email no es valido");
