@@ -13,9 +13,8 @@ import org.json.JSONObject;
 
 public class RegistrarseActivity extends AppCompatActivity {
 
-    //private String server = "http://192.168.88.7:80/PBI0MED_SERVIDOR/rest/"; // MOVIL MAYRO
-
-    private String server = "http://192.168.1.140:80/PBI0MED_SERVIDOR/src/rest/index.php"; // CASA MAYRO
+    //private String server = "http://192.168.88.7:80/PBIOMED_SERVIDOR/rest/index.php"; // MOVIL MAYR0
+    private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/index.php"; // CASA MAYRO
 
 
 
@@ -64,9 +63,9 @@ public class RegistrarseActivity extends AppCompatActivity {
         JSONObject objeto = new JSONObject();
         try {
             objeto.put("email", emailS);
-            objeto.put("nombreApellidos", nombreS);
-            objeto.put("nikcname", userS);
             objeto.put("contrasenya", passwordS);
+            objeto.put("nombreApellidos", nombreS);
+            objeto.put("nickname", userS);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
