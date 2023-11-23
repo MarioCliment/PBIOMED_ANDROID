@@ -16,10 +16,10 @@ import org.json.JSONObject;
 
 public class RegistrarseActivity extends AppCompatActivity {
 
-    //private String server = "http://192.168.88.7:80/PBIOMED_SERVIDOR/rest/index.php"; // MOVIL MAYR0
-    private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/index.php"; // CASA MAYRO
+    //private String server = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest"; // MOVIL MAYR0
+    //private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; // CASA MAYRO
 
-
+    private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; // CASA GRASA
 
     private String server_registro = server + "/user/add";
     private boolean resultado = false;
