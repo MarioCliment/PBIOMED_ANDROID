@@ -26,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; // CASA GRASA
 
     private String server_especifico = server + "/user/login";
-
+    private static String usuarioGlobal;
     private boolean resultado = false;
     EditText password;
     EditText user;
@@ -95,7 +95,8 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             // Convierte la cadena JSON en un objeto JSON
                             JSONObject jsonObject = new JSONObject(jsonString);
-
+                            //EXTRAER USUARIO PARA GLOBAL
+                            usuarioGlobal = jsonObject.getString("nickname");
                             // Extrae datos específicos del objeto JSON
                             resultado = jsonObject.getBoolean("resultado");
                             Log.d("resultado",""+resultado);
@@ -118,6 +119,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     void irRegistro(){
-        startActivity(new Intent(this, RegistrarseActivity.class));
+        startActivity(new Intent(this, RegistrarseActivity.RegistrarseActivity.class));
+    }
+    public static String getUser() {
+        return usuarioGlobal;
     }
 }

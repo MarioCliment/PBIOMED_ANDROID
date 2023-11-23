@@ -24,8 +24,12 @@ public class EditUserActivity extends AppCompatActivity {
     TextView textViewApellidoEdit = findViewById(R.id.textViewApellidoEdit);
     TextView textViewNicknameEdit = findViewById(R.id.textViewNicknameEdit);
     TextView textViewEmailEdit = findViewById(R.id.textViewEmailEdit);
-    private String resultado = "";
-    private String server_especifico = "http://localhost/PBIOMED_SERVIDOR/src/rest/index.php/user/all";
+    private boolean resultado = false;
+    private String server_especifico = "http://localhost/PBIOMED_SERVIDOR/src/rest/index.php/user/data";
+    //PARA QUE FUNCIONE CANCELAR
+    String nombreEditPre = "";
+    String nicknameEditPre = "";
+    String emailEditPre = "";
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +37,14 @@ public class EditUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
         String data = "";
+        //esto seguro que funciona...
+        //una funcion statica que solo se llama cuando se va desde el login?
+        String usuario = LoginActivity.getUser();
         //HOLA MARIO CLIMENT!!
-        // ESTO ES LO QUE QUIERO QUE OCURRA
         // se abre la pagina y tengo mi nombre,apellidos,email y nickname disponibles para que los pueda mirar
         //
         PeticionarioREST elPeticionario = new PeticionarioREST();
-        elPeticionario.hacerPeticionREST("GET", server_especifico, data,
+        elPeticionario.hacerPeticionREST("GET", server_especifico, usuario,
                 new PeticionarioREST.RespuestaREST() {
                     @Override
                     public void callback(int codigo, String cuerpo) {
@@ -57,22 +63,22 @@ public class EditUserActivity extends AppCompatActivity {
 
                             //Extraer email
                             emailDatabase = jsonObject.getString("email");
-                            Log.d("email es ",""+emailDatabase);
+                            Log.d("email es ", "" + emailDatabase);
                             textViewEmailEdit.setText(emailDatabase);
 
                             //Extraer nombre
                             nombreDatabase = jsonObject.getString("nombre");
-                            Log.d("nombre es ",""+ nombreDatabase);
+                            Log.d("nombre es ", "" + nombreDatabase);
                             textViewNombreEdit.setText(nombreDatabase);
 
                             //Extraer apellido
                             apellidoDatabase = jsonObject.getString("apellido");
-                            Log.d("apellido es ",""+ apellidoDatabase);
+                            Log.d("apellido es ", "" + apellidoDatabase);
                             textViewNombreEdit.setText(apellidoDatabase);
 
                             //Extraer nickname
                             nicknameDatabase = jsonObject.getString("nickname");
-                            Log.d("nickname es ",""+ nicknameDatabase);
+                            Log.d("nickname es ", "" + nicknameDatabase);
                             textViewNicknameEdit.setText(nicknameDatabase);
 
 
@@ -85,10 +91,12 @@ public class EditUserActivity extends AppCompatActivity {
     }
 
     public void botonEditar(View view) {
+        //La animacion para que se ponga azul AUN NO VA!!!
+        /*
         int colorFrom = getResources().getColor(R.color.white);
-        int colorTo = getResources().getColor(R.color.black);
+        int colorTo = getResources().getColor(R.color.blue); // el azul
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.setDuration(250); // milliseconds
+        colorAnimation.setDuration(250); // milliseconds habria que cambiar tambien la font
         ConstraintLayout constraintLayout = findViewById(R.id.consEdit);
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
@@ -99,33 +107,39 @@ public class EditUserActivity extends AppCompatActivity {
 
         });
         colorAnimation.start();
-
+         */
+        //PARA QUE FUNCIONE CANCELAR
+        nombreEditPre = textViewNombreEdit.getText().toString();
+        nicknameEditPre = textViewNicknameEdit.getText().toString();
+        emailEditPre = textViewEmailEdit.getText().toString();
+        //BOTONES VISIBLES
         botonguardar.setVisibility(View.VISIBLE);
         textoTutorial.setVisibility(View.VISIBLE);
     }
+
     public void guardarEditar(View view) {
-        //ESTO AUN NO LO HE IMPLEMENTADO Y LE TENGO QUE DAR VUELTAS!!!
-        //ESTO DEBERIA COGER INFORMACION DE LOS TEXTVIEWS EDITABLES
-        //Y POSTEARLA
-        
-        
-        
-        /* botonguardar.setVisibility(View.GONE);
+        //UHHHH
+
+        //BOTONES FUERA!
+        botonguardar.setVisibility(View.GONE);
         textoTutorial.setVisibility(View.GONE);
-        String userS = (String) textViewNombreEdit.getText();
-        String passwordS = (String) textViewNombreEdit.getText();
+        String userS = textViewNicknameEdit.getText().toString();
+        String nombreS = textViewNombreEdit.getText().toString();
+        String emailS = textViewEmailEdit.getText().toString();
+
 
         JSONObject objeto = new JSONObject();
         try {
-            objeto.put("user", userS);
-            objeto.put("password", passwordS);
+            objeto.put("email", emailS);
+            objeto.put("nombreApellidos", nombreS);
+            objeto.put("nickname", userS);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
         String data = objeto.toString();
 
         PeticionarioREST elPeticionario = new PeticionarioREST();
-        elPeticionario.hacerPeticionREST("POST", server_registro, data,
+        elPeticionario.hacerPeticionREST("PUT", server_registro, data,
                 new PeticionarioREST.RespuestaREST() {
                     @Override
                     public void callback(int codigo, String cuerpo) {
@@ -136,9 +150,9 @@ public class EditUserActivity extends AppCompatActivity {
 
                             // Extrae datos específicos del objeto JSON
                             resultado = jsonObject.getBoolean("resultado");
-                            Log.d("resultado",""+resultado);
-                            if (resultado == true){
-                                Log.d("registro","Registrado con éxito");
+                            Log.d("resultado", "" + resultado);
+                            if (resultado) {
+                                Log.d("registro", "Registrado con éxito");
                             }
 
                             // Haz algo con los datos extraídos
@@ -150,8 +164,17 @@ public class EditUserActivity extends AppCompatActivity {
                         }
                     }
                 });
-                
-         */
+
+
     }
+
+    public void cancelarEditar(View view) {
+        textViewNicknameEdit.setText(nicknameEditPre);
+        textViewNombreEdit.setText(nombreEditPre);
+        textViewEmailEdit.setText(emailEditPre);
+        //BOTONES FUERA!
+        botonguardar.setVisibility(View.GONE);
+        textoTutorial.setVisibility(View.GONE);
     }
+}
 

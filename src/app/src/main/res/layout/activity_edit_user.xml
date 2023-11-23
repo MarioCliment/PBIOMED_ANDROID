@@ -38,6 +38,7 @@
         android:textColor="#FF0000"
         android:textSize="24sp"
         android:textStyle="normal|bold"
+        android:visibility="invisible"
         app:cornerRadius="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
