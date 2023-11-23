@@ -23,7 +23,7 @@
         android:id="@+id/sondaSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="112dp"
         android:height="49dp"
         android:text="Recibir scan"
         android:textSize="20sp"
@@ -34,7 +34,8 @@
         android:id="@+id/btnScan"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="84dp"
         android:onClick="iniciarEscaner"
         android:text="Vincular Sonda"
         app:layout_constraintStart_toStartOf="@+id/sondaSwitch"
@@ -74,5 +75,24 @@
         android:text="Para poder recibir datos de la sonda, la aplicación ha de permanecer abierta en segundo plano"
         app:layout_constraintStart_toStartOf="@+id/explicacionTextView"
         app:layout_constraintTop_toBottomOf="@+id/explicacionTextView" />
+
+    <Button
+        android:id="@+id/localizarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="botonBuscarSonda"
+        android:text="Localizar sonda"
+        app:layout_constraintStart_toStartOf="@+id/sondaSwitch"
+        app:layout_constraintTop_toBottomOf="@+id/sondaSwitch" />
+
+    <TextView
+        android:id="@+id/localizarTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/localizarButton"
+        app:layout_constraintStart_toEndOf="@+id/localizarButton"
+        app:layout_constraintTop_toTopOf="@+id/localizarButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

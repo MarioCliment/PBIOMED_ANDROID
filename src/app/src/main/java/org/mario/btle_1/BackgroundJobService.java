@@ -49,7 +49,7 @@ public class BackgroundJobService extends JobService {
 
 
     // Para el scan bluetooth -----------------------------------------------
-    private String MAC_BUSCADA = "F0:11:67:82:89:CB";
+    private String MAC_BUSCADA;
 
     private ObjetoDeDosEnteros ValoresGuardados;
 
@@ -118,8 +118,11 @@ public class BackgroundJobService extends JobService {
     // Lo que tenga que ver con jobs suele devolver un true o false. Esto es simplemente si el trabajo debería empezar de nuevo cuando este acabe
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d(TAG, "Job started");
+        jobCancelled = false;
         notificationManager = (NotificationManager)
                 getSystemService(NOTIFICATION_SERVICE);
+        PersistableBundle datosJob = jobParameters.getExtras();
+        MAC_BUSCADA = datosJob.getString("MAC");
         // Esto maneja los datos del scan
         hayQueMoverElCacharro(jobParameters);
 
@@ -134,7 +137,7 @@ public class BackgroundJobService extends JobService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "Is job cancelled?: " +jobCancelled);
+                Log.d(TAG, "Is mover el cacharro job cancelled?: " +jobCancelled);
                 if (jobCancelled){
                     detenerBusquedaDispositivosBTLE();
                     return;
@@ -162,7 +165,7 @@ public class BackgroundJobService extends JobService {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                Log.d(TAG, "Is job cancelled?: " +jobCancelled);
+                Log.d(TAG, "Is manejar notificaiocnes job cancelled?: " +jobCancelled);
                 if (jobCancelled){
                     return;
                 }
@@ -299,10 +302,13 @@ public class BackgroundJobService extends JobService {
         Log.d(TAG, " ****************************************************");
         Log.d(TAG, " ****** DISPOSITIVO DETECTADO BTLE ****************** ");
         Log.d(TAG, " ****************************************************");
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, " mostrarInformacionDispositivoBTLE(): CONNECT FAILURE! ");
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, " mostrarInformacionDispositivoBTLE(): CONNECT FAILURE! ");
+                return;
+            }
         }
+
 
         Log.d(TAG, " mostrarInformacionDispositivoBTLE(): CONNECT READY! ");
         Log.d(TAG, " nombre = " + bluetoothDevice.getName());
@@ -347,6 +353,7 @@ public class BackgroundJobService extends JobService {
 
         // TODO: Cambiar medicionOzono por el valor actual de la medicion
 
+        Log.i(TAG, "mostrarInformacionDispositivoBTLE: major, minor = "+major +", " +minor);
         ValoresGuardados = new ObjetoDeDosEnteros( major, minor);
 
     } // ()
@@ -467,13 +474,16 @@ public class BackgroundJobService extends JobService {
         Log.d(TAG, "  buscarEsteDispositivoBTLE(): empezamos a escanear buscando: " + dispositivoBuscado);
         //Log.d(TAG, "  buscarEsteDispositivoBTLE(): empezamos a escanear buscando: " + dispositivoBuscado
         //      + " -> " + Utilidades.stringToUUID( dispositivoBuscado ) );
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, " buscarEsteDispositivoBTLE(): SCAN FAILURE! ");
+                return;
+            }
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, " buscarEsteDispositivoBTLE(): SCAN FAILURE! ");
-            return;
         }
         Log.d(TAG, " buscarEsteDispositivoBTLE(): SCAN READY! ");
         this.elEscanner.startScan(this.callbackDelEscaneo);
+
     } // ()
 
     // -------------------------------------------------------------------------
