@@ -1,7 +1,10 @@
 package org.mario.btle_1;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -13,10 +16,10 @@ import org.json.JSONObject;
 
 public class RegistrarseActivity extends AppCompatActivity {
 
-    //private String server = "http://192.168.88.7:80/PBIOMED_SERVIDOR/rest/index.php"; // MOVIL MAYR0
-    private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/index.php"; // CASA MAYRO
+    //private String server = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest"; // MOVIL MAYR0
+    //private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; // CASA MAYRO
 
-
+    private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; // CASA GRASA
 
     private String server_registro = server + "/user/add";
     private boolean resultado = false;
@@ -86,6 +89,28 @@ public class RegistrarseActivity extends AppCompatActivity {
                             Log.d("resultado",""+resultado);
                             if (resultado == true){
                                 Log.d("registro","Registrado con éxito");
+                                AlertDialog.Builder registroExitoso = new AlertDialog.Builder(RegistrarseActivity.this);
+                                registroExitoso.setMessage("Se ha registrado con éxito")
+                                        .setCancelable(false)
+                                        .setNeutralButton("Entendido", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialogInterface.cancel();
+                                                IrALoginActivity();
+                                            }
+                                        });
+                                registroExitoso.show();
+                            } else {
+                                AlertDialog.Builder registroFallido = new AlertDialog.Builder(RegistrarseActivity.this);
+                                registroFallido.setMessage("Ha ocurrido un error, contacte con soporte")
+                                        .setCancelable(false)
+                                        .setNeutralButton("Entendido", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialogInterface.cancel();
+                                            }
+                                        });
+                                registroFallido.show();
                             }
 
                             // Haz algo con los datos extraídos
@@ -98,6 +123,11 @@ public class RegistrarseActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void IrALoginActivity() {
+        startActivity(new Intent(this, LoginActivity.class));
+    }
+
     public boolean validateData(String email, String password, String confirmPassword) {
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             this.correo.setError("El email no es valido");
