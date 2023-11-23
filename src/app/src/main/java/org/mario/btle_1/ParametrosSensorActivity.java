@@ -12,7 +12,11 @@ import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +36,16 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.TimeZone;
+
 public class ParametrosSensorActivity extends AppCompatActivity {
 
     private final static String TAG = "ParametrosSensorActivity";
@@ -39,6 +54,12 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     private static final int CODIGO_PETICION_PERMISOS = 11223344;
     private static final int REQUEST_CODE_BLUETOOTH_SCAN = 3;
     private static final int REQUEST_CODE_BLUETOOTH_CONNECT = 5;
+
+
+    // estos son para la cercania de la sonda al movil
+    private boolean haSidoPulsado = false;
+    private int resultadoCercania = -1; // si se queda en -1 significa que ha fallado
+    private Handler handler = new Handler();
 
 
     private static final String[] BLE_PERMISSIONS = new String[]{
@@ -53,8 +74,18 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     };
 
 
+    // DOGSHIT MARIO PARA LA DOGSHIT DE TORTOSA
+
+    private ObjetoDeDosEnteros ValoresGuardados;
+
+    private boolean enviado = false;
+
+    private BluetoothLeScanner elEscanner;
+
+    private ScanCallback callbackDelEscaneo = null;
 
 
+    @SuppressLint("MissingPermission")
     @Override
     // Al crearse la actividad, el Switch estará como el usuario lo haya dejado
     // -------------------------------------------------------------------------
@@ -62,6 +93,10 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // -------------------------------------------------------------------------
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
+        // MALDICION DE LA SUPRESION!!! bta.enable() puede que de problemitas je!
+        bta.enable();
+        this.elEscanner = bta.getBluetoothLeScanner();
         setContentView(R.layout.activity_parametros_de_sensor);
 
 
@@ -255,7 +290,10 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     public void scheduleJob() {
 
         @SuppressLint("UseSwitchCompatOrMaterialCode") Switch sondaSwitch = findViewById(R.id.sondaSwitch);
-        requestBlePermissions(this, CODIGO_PETICION_PERMISOS);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestBlePermissions(this, CODIGO_PETICION_PERMISOS);
+        }
         inicializarBlueTooth();
         // Comprueba si ya tienes permiso para notificaciones
 
@@ -288,11 +326,15 @@ public class ParametrosSensorActivity extends AppCompatActivity {
             return;
         }
 
+        PersistableBundle datosJob = new PersistableBundle();
+        datosJob.putString("MAC", loadMACText());
+
         ComponentName componentName = new ComponentName(this, BackgroundJobService.class);
         JobInfo info = new JobInfo.Builder(123, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
                 .setPeriodic(15 * 60 * 1000) // 15 minutos
+                .setExtras(datosJob)
                 .build();
 
         int resultCode = scheduler.schedule(info);
@@ -381,14 +423,16 @@ public class ParametrosSensorActivity extends AppCompatActivity {
         BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
 
         Log.d(TAG, " inicializarBlueTooth(): habilitamos adaptador BT ");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, " inicializarBlueTooth(): CONNECT FAILURE! ");
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, " inicializarBlueTooth(): CONNECT FAILURE! ");
-
-            requestBlePermissions(this, CODIGO_PETICION_PERMISOS);
-            requestBluetoothConnect();
-            return;
+                requestBlePermissions(this, CODIGO_PETICION_PERMISOS);
+                requestBluetoothConnect();
+                return;
+            }
         }
+
         Log.d(TAG, " inicializarBlueTooth(): CONNECT READY! ");
         bta.enable();
 
@@ -434,6 +478,235 @@ public class ParametrosSensorActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(activity, BLE_PERMISSIONS, requestCode);
         }
     }
+
+
+    // Hasta que no haya una manera mejor de hacer esto, lo dejo por aqui...
+    // LOCALIZAR SONDA
+    // -------------------------------------------------------------------------
+    // ScanResult -> mostrarInformacionDispositivoBTLE()
+    // -------------------------------------------------------------------------
+
+    private void mostrarInformacionDispositivoBTLE(ScanResult resultado) {
+
+        BluetoothDevice bluetoothDevice = resultado.getDevice();
+        byte[] bytes = resultado.getScanRecord().getBytes();
+        int rssi = resultado.getRssi();
+
+        Log.d(TAG, " ****************************************************");
+        Log.d(TAG, " ****** DISPOSITIVO DETECTADO BTLE ****************** ");
+        Log.d(TAG, " ****************************************************");
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, " mostrarInformacionDispositivoBTLE(): CONNECT FAILURE! ");
+            return;
+        }
+
+        Log.d(TAG, " mostrarInformacionDispositivoBTLE(): CONNECT READY! ");
+        Log.d(TAG, " nombre = " + bluetoothDevice.getName());
+        Log.d(TAG, " toString = " + bluetoothDevice.toString());
+
+        /*
+        ParcelUuid[] puuids = bluetoothDevice.getUuids();
+        if ( puuids.length >= 1 ) {
+            //Log.d(TAG, " uuid = " + puuids[0].getUuid());
+           // Log.d(TAG, " uuid = " + puuids[0].toString());
+        }*/
+
+        Log.d(TAG, " dirección = " + bluetoothDevice.getAddress());
+        Log.d(TAG, " rssi = " + rssi);
+
+        Log.d(TAG, " bytes = " + new String(bytes));
+        Log.d(TAG, " bytes (" + bytes.length + ") = " + Utilidades.bytesToHexString(bytes));
+
+        TramaIBeacon tib = new TramaIBeacon(bytes);
+
+        Log.d(TAG, " ----------------------------------------------------");
+        Log.d(TAG, " prefijo  = " + Utilidades.bytesToHexString(tib.getPrefijo()));
+        Log.d(TAG, "          advFlags = " + Utilidades.bytesToHexString(tib.getAdvFlags()));
+        Log.d(TAG, "          advHeader = " + Utilidades.bytesToHexString(tib.getAdvHeader()));
+        Log.d(TAG, "          companyID = " + Utilidades.bytesToHexString(tib.getCompanyID()));
+        Log.d(TAG, "          iBeacon type = " + Integer.toHexString(tib.getiBeaconType()));
+        Log.d(TAG, "          iBeacon length 0x = " + Integer.toHexString(tib.getiBeaconLength()) + " ( "
+                + tib.getiBeaconLength() + " ) ");
+        Log.d(TAG, " uuid  = " + Utilidades.bytesToHexString(tib.getUUID()));
+        Log.d(TAG, " uuid  = " + Utilidades.bytesToString(tib.getUUID()));
+        Log.d(TAG, " major  = " + Utilidades.bytesToHexString(tib.getMajor()) + "( "
+                + Utilidades.bytesToInt(tib.getMajor()) + " ) ");
+        Log.d(TAG, " minor  = " + Utilidades.bytesToHexString(tib.getMinor()) + "( "
+                + Utilidades.bytesToInt(tib.getMinor()) + " ) ");
+        Log.d(TAG, " txPower  = " + Integer.toHexString(tib.getTxPower()) + " ( " + tib.getTxPower() + " )");
+        Log.d(TAG, " ****************************************************");
+
+
+        // Bytes de major y minor
+        int major = Utilidades.bytesToInt(tib.getMajor());
+        int minor = Utilidades.bytesToInt(tib.getMinor());
+
+        // TODO: Cambiar medicionOzono por el valor actual de la medicion
+
+        ValoresGuardados = new ObjetoDeDosEnteros( major, minor);
+
+    } // ()
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
+
+
+    // --------------------------------------------------------------
+    //  obtenerFechaConFormato() --> String
+    // --------------------------------------------------------------
+    @SuppressLint("SimpleDateFormat")
+    public static String obtenerFechaConFormato() {
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        SimpleDateFormat sdf;
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        return sdf.format(date);
+    }
+
+
+    // -------------------------------------------------------------------------
+    // String(una MAC) -> buscarEsteDispositivoBTLE() -> ScanResult
+    // -------------------------------------------------------------------------
+    private void encontrarCercaniaDispositivoBuscado(final String dispositivoBuscado) {
+        Log.d(TAG, " encontrarCercaniaDispositivoBuscado(): empieza ");
+        this.callbackDelEscaneo = new ScanCallback() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onScanResult(int callbackType, ScanResult resultado) {
+                super.onScanResult(callbackType, resultado);
+                Log.d(TAG, "  buscarEsteDispositivoBTLE(): onScanResult() ");
+                BluetoothDevice bluetoothDevice = resultado.getDevice();
+                //Log.d(TAG, " buscarEsteDispositivoBTLE():  ¿dispositivoBuscado = " + dispositivoBuscado + " equivale a bluetoothDevice.getName() = "+ bluetoothDevice.getName() + " ?");
+                // Este mostrarInformacion es para hacer debugging
+                // mostrarInformacionDispositivoBTLE(resultado);
+                // AQUI ES CUANDO FILTRAMOS Y ENCONTRAMOS NUESTRO DISPOSITIVO
+                //Log.d(TAG, "MAC DE ZAIDA ES: " + bluetoothDevice.getAddress());
+                if (Objects.equals(bluetoothDevice.getAddress(), dispositivoBuscado)) {
+                    Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo " +dispositivoBuscado+ " encontrado");
+                    byte[] bytes = resultado.getScanRecord().getBytes();
+                    TramaIBeacon tib = new TramaIBeacon(bytes);
+                    Log.d(TAG, " txPower  = " + Integer.toHexString(tib.getTxPower()) + " ( " + tib.getTxPower() + " )");
+                    if (tib.getTxPower() > 60) {
+                        resultadoCercania = 3; // cerca
+                    } if (tib.getTxPower() > 30) {
+                        resultadoCercania = 2; // medio
+                    } else {
+                        resultadoCercania = 1; // lejos
+                    }
+
+                } else {
+                    Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo no encontrado");
+                    //detenerBusquedaDispositivosBTLE();
+                    resultadoCercania = 0; //esto significa no encontrado :(
+                }
+            }
+
+            @Override
+            public void onBatchScanResults(List<ScanResult> results) {
+                super.onBatchScanResults(results);
+                Log.d(TAG, "  buscarEsteDispositivoBTLE(): onBatchScanResults() ");
+
+            }
+
+            @Override
+            public void onScanFailed(int errorCode) {
+                super.onScanFailed(errorCode);
+                Log.d(TAG, "  buscarEsteDispositivoBTLE(): onScanFailed() ");
+
+            }
+        };
+
+        ScanFilter sf = new ScanFilter.Builder().setDeviceName(dispositivoBuscado).build();
+
+        Log.d(TAG, "  buscarEsteDispositivoBTLE(): empezamos a escanear buscando: " + dispositivoBuscado);
+        //Log.d(TAG, "  buscarEsteDispositivoBTLE(): empezamos a escanear buscando: " + dispositivoBuscado
+        //      + " -> " + Utilidades.stringToUUID( dispositivoBuscado ) );
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "buscarEsteDispositivoBTLE(): SCAN FAILURE! ");
+                return;
+            }
+        }
+
+        Log.d(TAG, " buscarEsteDispositivoBTLE(): SCAN READY! ");
+        this.elEscanner.startScan(this.callbackDelEscaneo);
+    } // ()
+
+    // -------------------------------------------------------------------------
+    // detenerBusquedaDispositivosBTLE()
+    // -------------------------------------------------------------------------
+    // Lo que hace esta función es un COMPLETO MISTERIO!!! (¿Estará la función embrujada...?) (Mis compañeros de proyecto se mosquearán si no aviso que esto es ironía)
+    private void detenerBusquedaDispositivosBTLE() {
+
+        if (this.callbackDelEscaneo == null) {
+            Log.d(TAG, " detenerBusquedaDispositivosBTLE(): SCAN NULL! ");
+            return;
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, " detenerBusquedaDispositivosBTLE(): SCAN FAILURE! ");
+            return;
+        }
+        Log.d(TAG, " detenerBusquedaDispositivosBTLE(): SCAN READY! ");
+
+        this.elEscanner.stopScan(this.callbackDelEscaneo);
+        this.callbackDelEscaneo = null;
+
+    } // ()
+
+
+    private Runnable actualizarRunnable = new Runnable() {
+        @Override
+        public void run() {
+            encontrarCercaniaDispositivoBuscado(loadMACText());
+            actualizarBuscarTexto();
+            if (haSidoPulsado) {
+                handler.postDelayed(this, 500);
+            }
+        }
+    };
+
+    public void botonBuscarSonda(View v) {
+        haSidoPulsado = !haSidoPulsado;
+        Log.d(TAG, "botonBuscarSonda: haSidoPulsado = " + haSidoPulsado);
+
+        if (haSidoPulsado) {
+            handler.post(actualizarRunnable);
+        } else {
+            handler.removeCallbacks(actualizarRunnable);
+            resultadoCercania = -2;
+            actualizarBuscarTexto();
+        }
+    }
+
+    private void actualizarBuscarTexto() {
+        // Tu lógica para actualizar el TextView
+        Log.d(TAG, "botonBuscarSonda: resultadoCercanias = " + resultadoCercania);
+        TextView localizarTextView = findViewById(R.id.localizarTextView);
+        switch (resultadoCercania){
+            case -2:
+                localizarTextView.setText("");
+                break;
+            case -1:
+                localizarTextView.setText("Fallo en escaneo");
+                break;
+            case 0:
+                localizarTextView.setText("Fuera de rango");
+                break;
+            case 1:
+                localizarTextView.setText("Lejos");
+                break;
+            case 2:
+                localizarTextView.setText("Medio");
+                break;
+            case 3:
+                localizarTextView.setText("Cerca");
+                break;
+        }
+    }
+
 
 }
 
