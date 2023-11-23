@@ -50,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void botonIrATorty(View v) {
+        Intent intent = new Intent(this, TortyActivity.class);
+        startActivity(intent);
+    }
+
 
     // --------------------------------------------------------------
     // --------------------------------------------------------------
