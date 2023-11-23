@@ -18,14 +18,18 @@ import org.w3c.dom.Text;
 public class EditUserActivity extends AppCompatActivity {
     Button botonguardar = findViewById(R.id.editarBotonGuardar);
     TextView textoTutorial = findViewById(R.id.textViewTutorialEditar);
-    private String server = "http://192.168.45.7:80/ozonewarden/rest/";
-    private String server_registro = server + "/user/add";
+    //private String server = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest/";
+
+    private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/"; //CASA MAYRO
+
+    private String server_registro = server + "/user/edit";
     TextView textViewNombreEdit = findViewById(R.id.textViewNombreEdit);
     TextView textViewApellidoEdit = findViewById(R.id.textViewApellidoEdit);
     TextView textViewNicknameEdit = findViewById(R.id.textViewNicknameEdit);
     TextView textViewEmailEdit = findViewById(R.id.textViewEmailEdit);
     private boolean resultado = false;
-    private String server_especifico = "http://localhost/PBIOMED_SERVIDOR/src/rest/index.php/user/data";
+    //private String server_especifico = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest/user/data";
+    private String server_especifico = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/user/data"; //CASA MAYRO
     //PARA QUE FUNCIONE CANCELAR
     String nombreEditPre = "";
     String nicknameEditPre = "";

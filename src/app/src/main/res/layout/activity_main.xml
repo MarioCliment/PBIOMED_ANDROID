@@ -78,4 +78,11 @@
         android:onClick="botonIrParametrosSensor"
         android:text="Parámetros de la sonda" />
 
+    <Button
+        android:id="@+id/EditarInformacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="botonAEditar"
+        android:text="Editar Informacion" />
+
 </android.widget.LinearLayout>
