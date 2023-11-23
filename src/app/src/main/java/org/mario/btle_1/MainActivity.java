@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TortyActivity.class);
         startActivity(intent);
     }
+    public void botonAEditar(View v){
+        Intent intent = new Intent(this, EditUserActivity.class);
+        startActivity(intent);
+    }
 
 
     // --------------------------------------------------------------

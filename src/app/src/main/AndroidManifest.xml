@@ -47,6 +47,9 @@
             android:name=".TortosaActivity"
             android:exported="false" />
         <activity
+            android:name=".EditUserActivity"
+            android:exported="false" />
+        <activity
             android:name=".InformacionAdicionalActivity"
             android:exported="false"
             android:label="@string/title_activity_informacion_adicional"
