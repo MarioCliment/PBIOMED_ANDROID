@@ -96,10 +96,21 @@ public class RegistrarseActivity extends AppCompatActivity {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
                                                 dialogInterface.cancel();
+                                                IrALoginActivity();
                                             }
                                         });
                                 registroExitoso.show();
-                                IrALoginActivity();
+                            } else {
+                                AlertDialog.Builder registroFallido = new AlertDialog.Builder(RegistrarseActivity.this);
+                                registroFallido.setMessage("Ha ocurrido un error, contacte con soporte")
+                                        .setCancelable(false)
+                                        .setNeutralButton("Entendido", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialogInterface.cancel();
+                                            }
+                                        });
+                                registroFallido.show();
                             }
 
                             // Haz algo con los datos extraídos
