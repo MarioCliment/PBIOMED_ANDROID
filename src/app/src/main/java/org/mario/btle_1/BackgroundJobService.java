@@ -15,12 +15,22 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.PersistableBundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Lifecycle;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,10 +73,16 @@ public class BackgroundJobService extends JobService {
 
     private ScanCallback callbackDelEscaneo = null;
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
 
     //private String server = "http://192.168.88.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
 
     private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; // CASA MAYRO
+
+    private double latitud;
+    private double longitud;
 
 
     @SuppressLint("MissingPermission")
@@ -84,7 +100,11 @@ public class BackgroundJobService extends JobService {
         this.elEscanner = bta.getBluetoothLeScanner();
 
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); // Inicializa el notificationManager aquí
-    }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+
+        }
     @Override
     // De momento, esto es para que cancelarTodasLasNotificaciones sea llamado, pero puede servir para un futuro
     // -------------------------------------------------------------------------
@@ -410,27 +430,79 @@ public class BackgroundJobService extends JobService {
                     Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo " +dispositivoBuscado+ " encontrado");
                     mostrarInformacionDispositivoBTLE(resultado);
                     if(ValoresGuardados.getID() == 11){
-                        concentracion = ValoresGuardados.getVALOR();
-                        // Aqui guardamos la medicion
-                        medicionOzono = concentracion;
-                        enviado = false;
-                    }
-                    else if(ValoresGuardados.getID() == 12 && enviado == false){
-                        temperatura = ValoresGuardados.getVALOR();
+                        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+                        locationCallback = new LocationCallback() {
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                if (locationResult == null) {
+                                    return;
+                                }
+                                for (Location location : locationResult.getLocations()) {
+                                    latitud = location.getLatitude();
+                                    longitud = location.getLongitude();
+                                    Log.d("Lugar", "Latitud: " + latitud + ", Longitud: " + longitud);
+                                }
+                            }
+                        };
+                        requestLocationUpdates();
 
                         String tiempo = obtenerFechaConFormato();
                         String userS = LoginActivity.getUser();
-                        String latitud_longitud = "";
-
-                        // Crear los datos de la solicitud
-                        //String data = "tiempo=" + tiempo +"&temperatura=" + temperatura + "&concentracion=" + concentracion;
+                        String latitud_longitud = latitud+","+longitud;
 
                         JSONObject objeto = new JSONObject();
                         try {
                             objeto.put("nickname", userS);
                             objeto.put("fecha", tiempo);
-                            objeto.put("valor", temperatura);
-                            objeto.put("id", concentracion);
+                            objeto.put("valor", ValoresGuardados.getVALOR());
+                            objeto.put("id", ValoresGuardados.getID());
+                            objeto.put("lugar", latitud_longitud);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                        String data = objeto.toString();
+
+                        String server_especifico= server+ "user/measure/add";
+
+                        PeticionarioREST elPeticionario = new PeticionarioREST();
+                        elPeticionario.hacerPeticionREST("POST", server_especifico, data,
+                                new PeticionarioREST.RespuestaREST() {
+                                    @Override
+                                    public void callback(int codigo, String cuerpo) {
+                                        String text = "codigo respuesta= " + codigo + "<-> \n" + cuerpo;
+                                        Log.d(TAG, "callback: "+text);
+
+                                    }
+                                });
+                        enviado = false;
+                    }
+                    else if(ValoresGuardados.getID() == 12 && enviado == false){
+                        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+                        locationCallback = new LocationCallback() {
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                if (locationResult == null) {
+                                    return;
+                                }
+                                for (Location location : locationResult.getLocations()) {
+                                    latitud = location.getLatitude();
+                                    longitud = location.getLongitude();
+                                    Log.d("Lugar", "Latitud: " + latitud + ", Longitud: " + longitud);
+                                }
+                            }
+                        };
+                        requestLocationUpdates();
+
+                        String tiempo = obtenerFechaConFormato();
+                        String userS = LoginActivity.getUser();
+                        String latitud_longitud = latitud+","+longitud;
+
+                        JSONObject objeto = new JSONObject();
+                        try {
+                            objeto.put("nickname", userS);
+                            objeto.put("fecha", tiempo);
+                            objeto.put("valor", ValoresGuardados.getID());
+                            objeto.put("id", ValoresGuardados.getID());
                             objeto.put("lugar", latitud_longitud);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
@@ -547,4 +619,25 @@ public class BackgroundJobService extends JobService {
         jobCancelled = true;
         return true;
     }
+
+    private void requestLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.requestLocationUpdates(getLocationRequest(), locationCallback, null);
+        } /*else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                   LOCATION_PERMISSION_REQUEST_CODE);
+        }*/
+    }
+
+    private LocationRequest getLocationRequest() {
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(10000); // Intervalo de actualización en milisegundos
+        locationRequest.setFastestInterval(5000); // Intervalo más rápido en milisegundos
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return locationRequest;
+    }
+
+
 }
