@@ -586,7 +586,7 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                     Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo " +dispositivoBuscado+ " encontrado");
                     byte[] bytes = resultado.getScanRecord().getBytes();
                     TramaIBeacon tib = new TramaIBeacon(bytes);
-                    Log.d(TAG, " txPower  = " + Integer.toHexString(tib.getTxPower()) + " ( " + tib.getTxPower() + " )");
+                    // TODO: Cambiar este getTxPower por algo que realmente demuestre la distancia al sensor
                     if (tib.getTxPower() > 60) {
                         resultadoCercania = 3; // cerca
                     } if (tib.getTxPower() > 30) {

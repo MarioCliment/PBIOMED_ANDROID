@@ -73,16 +73,14 @@ public class BackgroundJobService extends JobService {
 
     private ScanCallback callbackDelEscaneo = null;
 
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private FusedLocationProviderClient fusedLocationClient;
-    private LocationCallback locationCallback;
+
 
     //private String server = "http://192.168.88.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
 
     private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; // CASA MAYRO
 
-    private double latitud;
-    private double longitud;
+    private double latitud=1;
+    private double longitud=1;
 
 
     @SuppressLint("MissingPermission")
@@ -100,8 +98,6 @@ public class BackgroundJobService extends JobService {
         this.elEscanner = bta.getBluetoothLeScanner();
 
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); // Inicializa el notificationManager aquí
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 
         }
@@ -430,21 +426,7 @@ public class BackgroundJobService extends JobService {
                     Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo " +dispositivoBuscado+ " encontrado");
                     mostrarInformacionDispositivoBTLE(resultado);
                     if(ValoresGuardados.getID() == 11){
-                        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-                        locationCallback = new LocationCallback() {
-                            @Override
-                            public void onLocationResult(LocationResult locationResult) {
-                                if (locationResult == null) {
-                                    return;
-                                }
-                                for (Location location : locationResult.getLocations()) {
-                                    latitud = location.getLatitude();
-                                    longitud = location.getLongitude();
-                                    Log.d("Lugar", "Latitud: " + latitud + ", Longitud: " + longitud);
-                                }
-                            }
-                        };
-                        requestLocationUpdates();
+
 
                         String tiempo = obtenerFechaConFormato();
                         String userS = LoginActivity.getUser();
@@ -477,21 +459,7 @@ public class BackgroundJobService extends JobService {
                         enviado = false;
                     }
                     else if(ValoresGuardados.getID() == 12 && enviado == false){
-                        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-                        locationCallback = new LocationCallback() {
-                            @Override
-                            public void onLocationResult(LocationResult locationResult) {
-                                if (locationResult == null) {
-                                    return;
-                                }
-                                for (Location location : locationResult.getLocations()) {
-                                    latitud = location.getLatitude();
-                                    longitud = location.getLongitude();
-                                    Log.d("Lugar", "Latitud: " + latitud + ", Longitud: " + longitud);
-                                }
-                            }
-                        };
-                        requestLocationUpdates();
+
 
                         String tiempo = obtenerFechaConFormato();
                         String userS = LoginActivity.getUser();
@@ -618,25 +586,6 @@ public class BackgroundJobService extends JobService {
         detenerBusquedaDispositivosBTLE();
         jobCancelled = true;
         return true;
-    }
-
-    private void requestLocationUpdates() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.requestLocationUpdates(getLocationRequest(), locationCallback, null);
-        } /*else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                   LOCATION_PERMISSION_REQUEST_CODE);
-        }*/
-    }
-
-    private LocationRequest getLocationRequest() {
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(10000); // Intervalo de actualización en milisegundos
-        locationRequest.setFastestInterval(5000); // Intervalo más rápido en milisegundos
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        return locationRequest;
     }
 
 
