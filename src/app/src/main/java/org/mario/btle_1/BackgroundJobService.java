@@ -64,7 +64,9 @@ public class BackgroundJobService extends JobService {
     private ScanCallback callbackDelEscaneo = null;
 
 
-    private String server = "http://192.168.88.7:80/ozonewarden/rest/";
+    //private String server = "http://192.168.88.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
+
+    private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; // CASA MAYRO
 
 
     @SuppressLint("MissingPermission")
@@ -417,21 +419,25 @@ public class BackgroundJobService extends JobService {
                         temperatura = ValoresGuardados.getVALOR();
 
                         String tiempo = obtenerFechaConFormato();
+                        String userS = LoginActivity.getUser();
+                        String latitud_longitud = "";
 
                         // Crear los datos de la solicitud
                         //String data = "tiempo=" + tiempo +"&temperatura=" + temperatura + "&concentracion=" + concentracion;
 
                         JSONObject objeto = new JSONObject();
                         try {
-                            objeto.put("tiempo", tiempo);
-                            objeto.put("temperatura", temperatura);
-                            objeto.put("concentracion", concentracion);
+                            objeto.put("nickname", userS);
+                            objeto.put("fecha", tiempo);
+                            objeto.put("valor", temperatura);
+                            objeto.put("id", concentracion);
+                            objeto.put("lugar", latitud_longitud);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
                         String data = objeto.toString();
 
-                        String server_especifico= server+ "guardarMedicion.php";
+                        String server_especifico= server+ "user/measure/add";
 
                         PeticionarioREST elPeticionario = new PeticionarioREST();
                         elPeticionario.hacerPeticionREST("POST", server_especifico, data,
