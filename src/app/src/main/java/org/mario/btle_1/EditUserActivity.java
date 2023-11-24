@@ -19,7 +19,7 @@ import org.w3c.dom.Text;
 public class EditUserActivity extends AppCompatActivity {
     //private String server = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest/";
 
-    private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/"; //CASA MAYRO
+    private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; //CASA MAYRO
 
     private String server_registro = server + "/user/edit";
     Button botonguardar;
@@ -46,33 +46,50 @@ public class EditUserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_user);
         botonguardar = findViewById(R.id.editarBotonGuardar);
         botonEditarBoton = findViewById(R.id.editarBotonEditar);
-        textoTutorial = findViewById(R.id.textViewTutorialEditar);
         textViewNombreEdit = findViewById(R.id.editTextNombre);
         textViewApellidoEdit = findViewById(R.id.editTextApellido);
         textViewNicknameEdit = findViewById(R.id.editTextNickname);
         textViewEmailEdit = findViewById(R.id.editTextEmailAddress);
         botonCancelarBoton = findViewById(R.id.editButtonCancelar);
-        String data = "";
+        //DESACTIVANDO EDITAR TEXTO
+        textViewNombreEdit.setEnabled(false);
+        textViewEmailEdit.setEnabled(false);
+        textViewApellidoEdit.setEnabled(false);
+        textViewNicknameEdit.setEnabled(false);
+        //String data = null;
         //esto seguro que funciona...
         //una funcion statica que solo se llama cuando se va desde el login?
-        String usuario = LoginActivity.getUser();
+        String userS = LoginActivity.getUser();
         //HOLA MARIO CLIMENT!!
         // se abre la pagina y tengo mi nombre,apellidos,email y nickname disponibles para que los pueda mirar
         //
+
+        JSONObject objeto = new JSONObject();
+        try {
+            objeto.put("nickname", userS);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        String data = objeto.toString();
+
         PeticionarioREST elPeticionario = new PeticionarioREST();
-        elPeticionario.hacerPeticionREST("GET", server_especifico, usuario,
+        elPeticionario.hacerPeticionREST("GET", server_especifico, data,
                 new PeticionarioREST.RespuestaREST() {
                     @Override
                     public void callback(int codigo, String cuerpo) {
                         String jsonString = cuerpo;
                         String emailDatabase = "";
+                        String[] nombreApellidosDatabase;
                         String nombreDatabase = "";
                         String apellidoDatabase = "";
                         String nicknameDatabase = "";
 
                         try {
+                            String editedString = jsonString;
+                            editedString = editedString.substring(1, editedString.length() - 1);
+
                             // Convierte la cadena JSON en un objeto JSON
-                            JSONObject jsonObject = new JSONObject(jsonString);
+                            JSONObject jsonObject = new JSONObject(editedString);
 
                             // Extrae datos específicos del objeto JSON y los imprime en
                             // los textviews
@@ -82,20 +99,25 @@ public class EditUserActivity extends AppCompatActivity {
                             Log.d("email es ", "" + emailDatabase);
                             textViewEmailEdit.setText(emailDatabase);
 
-                            //Extraer nombre
-                            nombreDatabase = jsonObject.getString("nombre");
-                            Log.d("nombre es ", "" + nombreDatabase);
-                            textViewNombreEdit.setText(nombreDatabase);
-
-                            //Extraer apellido
-                            apellidoDatabase = jsonObject.getString("apellido");
-                            Log.d("apellido es ", "" + apellidoDatabase);
-                            textViewNombreEdit.setText(apellidoDatabase);
-
                             //Extraer nickname
                             nicknameDatabase = jsonObject.getString("nickname");
                             Log.d("nickname es ", "" + nicknameDatabase);
                             textViewNicknameEdit.setText(nicknameDatabase);
+
+                            //Extraer nombre y apellidos
+                            nombreApellidosDatabase =separarNombreApellidos(jsonObject.getString("nombreApellidos"));
+
+                            //Extraer nombre
+                            nombreDatabase = nombreApellidosDatabase[0];
+                            Log.d("nombre es ", "" + nombreDatabase);
+                            textViewNombreEdit.setText(nombreDatabase);
+
+                            //Extraer apellido
+                            apellidoDatabase = nombreApellidosDatabase[1];
+                            Log.d("apellido es ", "" + apellidoDatabase);
+                            textViewApellidoEdit.setText(apellidoDatabase);
+
+
 
 
                         } catch (JSONException e) {
@@ -130,7 +152,6 @@ public class EditUserActivity extends AppCompatActivity {
         emailEditPre = textViewEmailEdit.getText().toString();
         //BOTONES VISIBLES
         botonguardar.setVisibility(View.VISIBLE);
-        textoTutorial.setVisibility(View.VISIBLE);
         botonCancelarBoton.setVisibility(View.VISIBLE);
         //FUERA EDITAR!
         botonEditarBoton.setVisibility(View.GONE);
@@ -146,7 +167,6 @@ public class EditUserActivity extends AppCompatActivity {
 
         //BOTONES FUERA!
         botonguardar.setVisibility(View.GONE);
-        textoTutorial.setVisibility(View.GONE);
         botonCancelarBoton.setVisibility(View.GONE);
         //EDITAR DENTRO
         botonEditarBoton.setVisibility(View.VISIBLE);
@@ -158,15 +178,17 @@ public class EditUserActivity extends AppCompatActivity {
 
 
         String userS = textViewNicknameEdit.getText().toString();
-        String nombreS = textViewNombreEdit.getText().toString();
+        String nombreApellidoS = textViewNombreEdit.getText().toString()+textViewApellidoEdit.getText().toString();
         String emailS = textViewEmailEdit.getText().toString();
+        String oldUserS = LoginActivity.getUser();
 
 
         JSONObject objeto = new JSONObject();
         try {
             objeto.put("email", emailS);
-            objeto.put("nombreApellidos", nombreS);
+            objeto.put("nombreApellidos", nombreApellidoS);
             objeto.put("nickname", userS);
+            objeto.put("oldNickname", oldUserS);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -217,6 +239,36 @@ public class EditUserActivity extends AppCompatActivity {
         textViewEmailEdit.setEnabled(false);
         textViewApellidoEdit.setEnabled(false);
         textViewNicknameEdit.setEnabled(false);
+    }
+
+    // Función para separar el nombre y apellidos
+    public static String[] separarNombreApellidos(String nombreCompleto) {
+        String[] resultado = new String[2];
+
+        // Encontramos la posición donde comienza el apellido
+        int posicionApellido = encontrarPosicionApellido(nombreCompleto);
+
+        // Extraemos el nombre y el apellido
+        resultado[0] = nombreCompleto.substring(0, posicionApellido);
+        resultado[1] = nombreCompleto.substring(posicionApellido);
+
+        return resultado;
+    }
+
+    // Función para encontrar la posición donde comienza el apellido
+    public static int encontrarPosicionApellido(String nombreCompleto) {
+        // Encontramos la posición donde comienza el apellido (primera letra mayúscula después de la primera letra minúscula)
+        int longitudNombre = nombreCompleto.length();
+        int posicionApellido = longitudNombre;
+
+        for (int i = 1; i < longitudNombre; i++) {
+            if (Character.isUpperCase(nombreCompleto.charAt(i)) && Character.isLowerCase(nombreCompleto.charAt(i - 1))) {
+                posicionApellido = i;
+                break;
+            }
+        }
+
+        return posicionApellido;
     }
 }
 
