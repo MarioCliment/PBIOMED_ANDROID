@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -16,17 +17,20 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 public class EditUserActivity extends AppCompatActivity {
-    Button botonguardar = findViewById(R.id.editarBotonGuardar);
-    TextView textoTutorial = findViewById(R.id.textViewTutorialEditar);
     //private String server = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest/";
 
     private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/"; //CASA MAYRO
 
     private String server_registro = server + "/user/edit";
-    TextView textViewNombreEdit = findViewById(R.id.textViewNombreEdit);
-    TextView textViewApellidoEdit = findViewById(R.id.textViewApellidoEdit);
-    TextView textViewNicknameEdit = findViewById(R.id.textViewNicknameEdit);
-    TextView textViewEmailEdit = findViewById(R.id.textViewEmailEdit);
+    Button botonguardar;
+    Button botonEditarBoton;
+    Button botonCancelarBoton;
+    TextView textoTutorial;
+    EditText textViewNombreEdit;
+    EditText textViewApellidoEdit;
+    EditText textViewNicknameEdit;
+    EditText textViewEmailEdit;
+
     private boolean resultado = false;
     //private String server_especifico = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest/user/data";
     private String server_especifico = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/user/data"; //CASA MAYRO
@@ -40,6 +44,14 @@ public class EditUserActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
+        botonguardar = findViewById(R.id.editarBotonGuardar);
+        botonEditarBoton = findViewById(R.id.editarBotonEditar);
+        textoTutorial = findViewById(R.id.textViewTutorialEditar);
+        textViewNombreEdit = findViewById(R.id.editTextNombre);
+        textViewApellidoEdit = findViewById(R.id.editTextApellido);
+        textViewNicknameEdit = findViewById(R.id.editTextNickname);
+        textViewEmailEdit = findViewById(R.id.editTextEmailAddress);
+        botonCancelarBoton = findViewById(R.id.editButtonCancelar);
         String data = "";
         //esto seguro que funciona...
         //una funcion statica que solo se llama cuando se va desde el login?
@@ -119,6 +131,14 @@ public class EditUserActivity extends AppCompatActivity {
         //BOTONES VISIBLES
         botonguardar.setVisibility(View.VISIBLE);
         textoTutorial.setVisibility(View.VISIBLE);
+        botonCancelarBoton.setVisibility(View.VISIBLE);
+        //FUERA EDITAR!
+        botonEditarBoton.setVisibility(View.GONE);
+        //ACTIVANDO EDITAR TEXTO
+        textViewNombreEdit.setEnabled(true);
+        textViewEmailEdit.setEnabled(true);
+        textViewApellidoEdit.setEnabled(true);
+        textViewNicknameEdit.setEnabled(true);
     }
 
     public void guardarEditar(View view) {
@@ -127,6 +147,16 @@ public class EditUserActivity extends AppCompatActivity {
         //BOTONES FUERA!
         botonguardar.setVisibility(View.GONE);
         textoTutorial.setVisibility(View.GONE);
+        botonCancelarBoton.setVisibility(View.GONE);
+        //EDITAR DENTRO
+        botonEditarBoton.setVisibility(View.VISIBLE);
+        //DESACTIVANDO EDITAR TEXTO
+        textViewNombreEdit.setEnabled(false);
+        textViewEmailEdit.setEnabled(false);
+        textViewApellidoEdit.setEnabled(false);
+        textViewNicknameEdit.setEnabled(false);
+
+
         String userS = textViewNicknameEdit.getText().toString();
         String nombreS = textViewNombreEdit.getText().toString();
         String emailS = textViewEmailEdit.getText().toString();
@@ -179,6 +209,14 @@ public class EditUserActivity extends AppCompatActivity {
         //BOTONES FUERA!
         botonguardar.setVisibility(View.GONE);
         textoTutorial.setVisibility(View.GONE);
+        botonCancelarBoton.setVisibility(View.GONE);
+        //EDITAR DENTRO
+        botonEditarBoton.setVisibility(View.VISIBLE);
+        //DESACTIVANDO EDITAR TEXTO
+        textViewNombreEdit.setEnabled(false);
+        textViewEmailEdit.setEnabled(false);
+        textViewApellidoEdit.setEnabled(false);
+        textViewNicknameEdit.setEnabled(false);
     }
 }
 

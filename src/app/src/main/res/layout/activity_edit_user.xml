@@ -10,7 +10,7 @@
     android:animateLayoutChanges="true">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/editarBotonEditar"
         android:layout_width="230dp"
         android:layout_height="70dp"
         android:backgroundTint="#024FC9"
@@ -32,7 +32,7 @@
         android:layout_width="230dp"
         android:layout_height="70dp"
         android:backgroundTint="#000000"
-        android:onClick="botonEditar"
+        android:onClick="cancelarEditar"
         android:text="Cancelar"
         android:textAllCaps="false"
         android:textColor="#FF0000"
@@ -45,7 +45,7 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.959" />
+        app:layout_constraintVertical_bias="0.934" />
 
     <Button
         android:id="@+id/editarBotonGuardar"
@@ -135,6 +135,7 @@
         android:layout_marginStart="7dp"
         android:layout_marginEnd="81dp"
         android:layout_marginBottom="309dp"
+        android:editable="false"
         android:ems="10"
         android:inputType="textEmailAddress"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -145,9 +146,9 @@
         android:id="@+id/editTextNombre"
         android:layout_width="229dp"
         android:layout_height="48dp"
-        android:layout_marginTop="25dp"
         android:layout_marginEnd="42dp"
         android:layout_marginBottom="72dp"
+        android:editable="false"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
@@ -156,7 +157,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textViewNombreEdit"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTutorialEditar" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/editTextApellido"
@@ -164,6 +166,7 @@
         android:layout_height="48dp"
         android:layout_marginTop="276dp"
         android:layout_marginEnd="42dp"
+        android:editable="false"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
@@ -179,6 +182,7 @@
         android:layout_height="48dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="328dp"
+        android:editable="false"
         android:ems="10"
         android:inputType="text"
         android:text="Name"

@@ -15,6 +15,13 @@
         android:text="Información adicional" />
 
     <Button
+        android:id="@+id/tortosa2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="botonAEditar"
+        android:text="EditarUsuario" />
+
+    <Button
         android:id="@+id/botonBuscarDispositivosBTLE"
         android:text="Buscar Dispositivos BTLE nou 4"
         android:onClick="botonBuscarDispositivosBTLEPulsado"
