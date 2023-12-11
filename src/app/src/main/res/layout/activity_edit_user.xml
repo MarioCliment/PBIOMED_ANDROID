@@ -9,188 +9,169 @@
     android:background="#FFFFFF"
     android:visibility="visible">
 
-    <Button
-        android:id="@+id/editarBotonEditar"
-        android:layout_width="230dp"
-        android:layout_height="70dp"
-        android:backgroundTint="#024FC9"
-        android:onClick="botonEditar"
-        android:text="Editar"
-        android:textAllCaps="false"
-        android:textSize="24sp"
-        android:textStyle="normal|bold"
-        app:cornerRadius="25dp"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.706" />
-
-    <Button
-        android:id="@+id/editButtonCancelar"
-        android:layout_width="230dp"
-        android:layout_height="70dp"
-        android:backgroundTint="#000000"
-        android:onClick="cancelarEditar"
-        android:text="Cancelar"
-        android:textAllCaps="false"
-        android:textColor="#FF0000"
-        android:textSize="24sp"
-        android:textStyle="normal|bold"
-        android:visibility="invisible"
-        app:cornerRadius="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.934" />
-
-    <Button
-        android:id="@+id/editarBotonGuardar"
-        android:layout_width="230dp"
-        android:layout_height="70dp"
-        android:backgroundTint="#FFFFFF"
-        android:onClick="guardarEditar"
-        android:text="Guardar"
-        android:textAllCaps="false"
-        android:textColor="#024FC9"
-        android:textSize="24sp"
-        android:textStyle="normal|bold"
-        android:visibility="invisible"
-        app:cornerRadius="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.829" />
-
-    <ImageButton
-        android:id="@+id/imageButton3"
-        android:layout_width="91dp"
-        android:layout_height="83dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="160dp"
-        android:backgroundTint="#00FFFFFF"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cuenta_icono" />
+        app:srcCompat="@drawable/fondo" />
 
     <TextView
-        android:id="@+id/textViewEmailEdit"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Email:"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextEmailAddress"
-        app:layout_constraintEnd_toStartOf="@+id/editTextEmailAddress"
-        app:layout_constraintTop_toTopOf="@+id/editTextEmailAddress" />
+        android:layout_marginBottom="24dp"
+        android:fontFamily="sans-serif"
+        android:text="Cambiar Datos"
+        android:textColor="#F4F4F4"
+        android:textSize="37sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
+        app:layout_constraintStart_toStartOf="@+id/frameLayout"  />
 
-    <EditText
-        android:id="@+id/editTextEmailAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:editable="false"
-        android:ems="10"
-        android:inputType="textEmailAddress"
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="370dp"
+        android:layout_height="531dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_frame"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.547"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.582" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/editTextNombre"
-        android:layout_width="229dp"
-        android:layout_height="48dp"
-        android:editable="false"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.741"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.319" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textViewNombreEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nombre:"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextNombre"
-        app:layout_constraintEnd_toStartOf="@+id/editTextNombre"
-        app:layout_constraintTop_toTopOf="@+id/editTextNombre" />
+            <EditText
+                android:id="@+id/editTextEmailAddress"
+                android:layout_width="322dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:ems="10"
+                android:hint="Correo"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/editTextNombre"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewApellidoEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Apellido:"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextApellido"
-        app:layout_constraintEnd_toStartOf="@+id/editTextApellido"
-        app:layout_constraintTop_toTopOf="@+id/editTextApellido" />
+            <EditText
+                android:id="@+id/editTextNombre"
+                android:layout_width="322dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:ems="10"
+                android:hint="Nombre"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/editTextApellido"
+                app:layout_constraintStart_toStartOf="@+id/editTextEmailAddress"
+                app:layout_constraintTop_toBottomOf="@+id/editTextEmailAddress" />
 
-    <EditText
-        android:id="@+id/editTextApellido"
-        android:layout_width="229dp"
-        android:layout_height="48dp"
-        android:editable="false"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.741"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.404" />
+            <EditText
+                android:id="@+id/editTextApellido"
+                android:layout_width="322dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:ems="10"
+                android:hint="Apellido"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/editTextNickname"
+                app:layout_constraintStart_toStartOf="@+id/editTextNombre"
+                app:layout_constraintTop_toBottomOf="@+id/editTextNombre" />
 
-    <TextView
-        android:id="@+id/textViewNicknameEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nickname:"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextNickname"
-        app:layout_constraintEnd_toStartOf="@+id/editTextNickname"
-        app:layout_constraintTop_toTopOf="@+id/editTextNickname" />
+            <EditText
+                android:id="@+id/editTextNickname"
+                android:layout_width="322dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:ems="10"
+                android:hint="Nickname"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/editarBotonEditar2"
+                app:layout_constraintStart_toStartOf="@+id/editTextApellido"
+                app:layout_constraintTop_toBottomOf="@+id/editTextApellido" />
 
-    <EditText
-        android:id="@+id/editTextNickname"
-        android:layout_width="229dp"
-        android:layout_height="48dp"
-        android:editable="false"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.862"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.499" />
+            <Button
+                android:id="@+id/editarBotonEditar2"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="#024FC9"
+                android:onClick="botonEditar"
+                android:text="Editar"
+                android:textAllCaps="false"
+                android:textSize="24sp"
+                android:textStyle="normal|bold"
+                app:cornerRadius="25dp"
+                app:layout_constraintBottom_toTopOf="@+id/irACambioContrasenya"
+                app:layout_constraintEnd_toEndOf="@+id/editTextNickname"
+                app:layout_constraintStart_toStartOf="@+id/editTextNickname"
+                app:layout_constraintTop_toBottomOf="@+id/editTextNickname" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:text="Datos de la cuenta"
-        android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton3" />
+            <Button
+                android:id="@+id/irACambioContrasenya"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#024FC9"
+                android:text="Cambiar Contraseña"
+                android:textAllCaps="false"
+                android:textSize="24sp"
+                android:textStyle="normal|bold"
+                app:cornerRadius="25dp"
+                app:layout_constraintBottom_toTopOf="@+id/editButtonCancelar"
+                app:layout_constraintStart_toStartOf="@+id/editarBotonEditar2"
+                app:layout_constraintTop_toBottomOf="@+id/editarBotonEditar2" />
+
+            <Button
+                android:id="@+id/editButtonCancelar"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FF0000"
+                android:onClick="cancelarEditar"
+                android:text="Cancelar"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="normal|bold"
+                android:visibility="invisible"
+                app:cornerRadius="25dp"
+                app:layout_constraintBottom_toTopOf="@+id/editarBotonGuardar"
+                app:layout_constraintStart_toStartOf="@+id/irACambioContrasenya"
+                app:layout_constraintTop_toBottomOf="@+id/irACambioContrasenya" />
+
+            <Button
+                android:id="@+id/editarBotonGuardar"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:onClick="guardarEditar"
+                android:text="Guardar"
+                android:textAllCaps="false"
+                android:textColor="#024FC9"
+                android:textSize="24sp"
+                android:textStyle="normal|bold"
+                android:visibility="invisible"
+                app:cornerRadius="25dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/editButtonCancelar"
+                app:layout_constraintTop_toBottomOf="@+id/editButtonCancelar" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

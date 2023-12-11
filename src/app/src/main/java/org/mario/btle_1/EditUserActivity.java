@@ -1,10 +1,7 @@
 package org.mario.btle_1;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +11,6 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 public class EditUserActivity extends AppCompatActivity {
     //private String server = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest/";
@@ -45,7 +41,7 @@ public class EditUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
         botonguardar = findViewById(R.id.editarBotonGuardar);
-        botonEditarBoton = findViewById(R.id.editarBotonEditar);
+        botonEditarBoton = findViewById(R.id.irACambioContrasenya);
         textViewNombreEdit = findViewById(R.id.editTextNombre);
         textViewApellidoEdit = findViewById(R.id.editTextApellido);
         textViewNicknameEdit = findViewById(R.id.editTextNickname);
