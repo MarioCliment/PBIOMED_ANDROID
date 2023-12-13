@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private String server_especifico = server + "/user/login";
     private static String usuarioGlobal;
+    private static String passwordGlobal;
     private boolean resultado = false;
     EditText password;
     EditText user;
@@ -97,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject(jsonString);
                             //EXTRAER USUARIO PARA GLOBAL
                             usuarioGlobal = jsonObject.getString("nickname");
+                            passwordGlobal = jsonObject.getString("contrasenya");
                             // Extrae datos específicos del objeto JSON
                             resultado = jsonObject.getBoolean("resultado");
                             Log.d("resultado",""+resultado);
@@ -123,5 +125,8 @@ public class LoginActivity extends AppCompatActivity {
     }
     public static String getUser() {
         return usuarioGlobal;
+    }
+    public static String getPassword() {
+        return passwordGlobal;
     }
 }
