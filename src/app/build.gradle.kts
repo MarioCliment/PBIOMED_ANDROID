@@ -32,6 +32,11 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packagingOptions {
+        exclude ("META-INF/DEPENDENCIES")
+        exclude ("mozilla/public-suffix-list.txt")
+    }
 }
 
 dependencies {
