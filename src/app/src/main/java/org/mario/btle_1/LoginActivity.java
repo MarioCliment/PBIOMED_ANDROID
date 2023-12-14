@@ -19,14 +19,15 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    //private String server = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
+    private String server = "http://192.168.229.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
 
-    private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest";  //CASA MAYRO
+    //private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest";  //CASA MAYRO
 
     //private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; // CASA GRASA
 
     private String server_especifico = server + "/user/login";
     private static String usuarioGlobal;
+    private static String passwordGlobal;
     private boolean resultado = false;
     EditText password;
     EditText user;
@@ -97,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject(jsonString);
                             //EXTRAER USUARIO PARA GLOBAL
                             usuarioGlobal = jsonObject.getString("nickname");
+                            passwordGlobal = jsonObject.getString("contrasenya");
                             // Extrae datos específicos del objeto JSON
                             resultado = jsonObject.getBoolean("resultado");
                             Log.d("resultado",""+resultado);
@@ -123,5 +125,8 @@ public class LoginActivity extends AppCompatActivity {
     }
     public static String getUser() {
         return usuarioGlobal;
+    }
+    public static String getPassword() {
+        return passwordGlobal;
     }
 }
