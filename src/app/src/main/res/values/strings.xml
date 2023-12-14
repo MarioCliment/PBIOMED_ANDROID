@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BTLE_1</string>
+    <string name="app_name">Ozone Warden</string>
     <string name="title_activity_informacion_adicional">InformacionAdicionalActivity</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"

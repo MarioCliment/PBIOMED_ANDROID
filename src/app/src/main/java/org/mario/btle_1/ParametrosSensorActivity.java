@@ -289,6 +289,7 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // -------------------------------------------------------------------------
 
     // ¡¡¡Hola Gabriel!!! ¡¡¡Saluda de vuelta!!!
+    // HOLA!!!! HOLA GABRIEL!!!!
 
 
     public void scheduleJob() {
