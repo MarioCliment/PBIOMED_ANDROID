@@ -19,7 +19,10 @@ import android.os.Bundle;
 import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -63,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
     private LocationCallback locationCallback;
 
     private ObjetoDeDosEnteros ValoresGuardados;
+
+    private WebView webView;
+    private LinearLayout panelButtons;
 
     // --------------------------------------------------------------
     // --------------------------------------------------------------
@@ -136,6 +142,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        webView = (WebView) findViewById(R.id.webview_map);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webView.loadUrl("https://www.upv.es/plano/plano-2d-en.html");
+
+        panelButtons = (LinearLayout) findViewById(R.id.panel_buttons);
+
+        Button menuButton = (Button) findViewById(R.id.button_menu);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (panelButtons.getVisibility() == View.GONE) {
+                    // Si el panel está oculto, lo mostramos
+                    panelButtons.setVisibility(View.VISIBLE);
+                } else {
+                    // Si el panel está visible, lo ocultamos
+                    panelButtons.setVisibility(View.GONE);
+                }
+            }
+        });
         // Solicitar permisos BLE automáticamente al iniciar la actividad
     } // onCreate()
 
