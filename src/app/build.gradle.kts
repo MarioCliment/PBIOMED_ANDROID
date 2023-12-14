@@ -40,10 +40,12 @@ dependencies {
     implementation("com.google.android.material:material:1.8.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.firebase:firebase-crashlytics-buildtools:2.9.9")
+    implementation ("com.sun.mail:android-mail:1.6.5")
+    implementation ("com.sun.mail:android-activation:1.6.5")
+    implementation ("com.sendgrid:sendgrid-java:4.2.1")
     implementation("com.journeyapps:zxing-android-embedded:4.1.0")
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.google.android.gms:play-services-location:21.0.1")
-
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
