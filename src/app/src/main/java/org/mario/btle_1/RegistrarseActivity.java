@@ -142,6 +142,7 @@ public class RegistrarseActivity extends AppCompatActivity {
                 Request request = new Request();
                 request.setMethod(Method.POST);
                 request.setEndpoint("mail/send");
+                //espero que funcione
 
                 JSONObject personalization = new JSONObject();
                 personalization.put("to", new JSONArray().put(new JSONObject().put("email", destinatario)));
