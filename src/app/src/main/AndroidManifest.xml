@@ -78,7 +78,9 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".EditPassActivity"
+            android:exported="false" />
         <service
             android:name=".BackgroundJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />

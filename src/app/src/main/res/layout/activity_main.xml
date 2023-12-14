@@ -15,70 +15,6 @@
         android:text="Información adicional" />
 
     <Button
-        android:id="@+id/tortosa2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="botonAEditar"
-        android:text="EditarUsuario" />
-
-    <Button
-        android:id="@+id/botonBuscarDispositivosBTLE"
-        android:text="Buscar Dispositivos BTLE nou 4"
-        android:onClick="botonBuscarDispositivosBTLEPulsado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <Button
-        android:id="@+id/botonDetenerBusquedaDispositivosBTLE"
-        android:text="Detener búsaqueda Dispositivos BTLE"
-        android:onClick="botonDetenerBusquedaDispositivosBTLEPulsado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <Button
-        android:id="@+id/botonBuscarNuestroDispositivoBTLE"
-        android:text="Buscar nuestro dispositivo  BTLE"
-        android:onClick="botonBuscarNuestroDispositivoBTLEPulsado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <TextView
-        android:id="@+id/datosBluetoothNombre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/datosBluetoothMajor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/datosBluetoothMinor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/scaneoStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="scaneoStatus" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SERVIDOR" />
-
-    <TextView
-        android:id="@+id/elTexto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="MensajeServidor" />
-
-    <Button
         android:id="@+id/ParametrosButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -91,12 +27,5 @@
         android:layout_height="wrap_content"
         android:onClick="botonAEditar"
         android:text="Editar Informacion" />
-
-    <Button
-        android:id="@+id/falsaSonda"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="falsaSonda"
-        android:text="Falsa sonda" />
 
 </android.widget.LinearLayout>

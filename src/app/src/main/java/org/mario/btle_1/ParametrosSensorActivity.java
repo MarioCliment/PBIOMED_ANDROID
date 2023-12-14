@@ -287,6 +287,10 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // -------------------------------------------------------------------------
     // scheduleJob()
     // -------------------------------------------------------------------------
+
+    // ¡¡¡Hola Gabriel!!! ¡¡¡Saluda de vuelta!!!
+
+
     public void scheduleJob() {
 
         @SuppressLint("UseSwitchCompatOrMaterialCode") Switch sondaSwitch = findViewById(R.id.sondaSwitch);

@@ -1,10 +1,8 @@
 package org.mario.btle_1;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +12,6 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 public class EditUserActivity extends AppCompatActivity {
     private String server = "http://192.168.229.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
@@ -25,11 +22,18 @@ public class EditUserActivity extends AppCompatActivity {
     Button botonguardar;
     Button botonEditarBoton;
     Button botonCancelarBoton;
+    Button botonPass;
     TextView textoTutorial;
+
+    TextView textViewPasWrong;
     EditText textViewNombreEdit;
     EditText textViewApellidoEdit;
     EditText textViewNicknameEdit;
     EditText textViewEmailEdit;
+    EditText editTextPasNew;
+    EditText editTextPasOld;
+
+
 
     private boolean resultado = false;
     private String server_especifico = "http://192.168.229.7:80/PBIOMED_SERVIDOR/src/rest/user/data"; // MOVIL MAYRO
@@ -51,6 +55,7 @@ public class EditUserActivity extends AppCompatActivity {
         textViewNicknameEdit = findViewById(R.id.editTextNickname);
         textViewEmailEdit = findViewById(R.id.editTextEmailAddress);
         botonCancelarBoton = findViewById(R.id.editButtonCancelar);
+        botonPass = findViewById(R.id.cambiarPas);
         //DESACTIVANDO EDITAR TEXTO
         textViewNombreEdit.setEnabled(false);
         textViewEmailEdit.setEnabled(false);
@@ -155,6 +160,7 @@ public class EditUserActivity extends AppCompatActivity {
         botonCancelarBoton.setVisibility(View.VISIBLE);
         //FUERA EDITAR!
         botonEditarBoton.setVisibility(View.GONE);
+        botonPass.setVisibility(View.GONE);
         //ACTIVANDO EDITAR TEXTO
         textViewNombreEdit.setEnabled(true);
         textViewEmailEdit.setEnabled(true);
@@ -170,6 +176,7 @@ public class EditUserActivity extends AppCompatActivity {
         botonCancelarBoton.setVisibility(View.GONE);
         //EDITAR DENTRO
         botonEditarBoton.setVisibility(View.VISIBLE);
+        botonEditarBoton.setVisibility(View.VISIBLE);
         //DESACTIVANDO EDITAR TEXTO
         textViewNombreEdit.setEnabled(false);
         textViewEmailEdit.setEnabled(false);
@@ -182,7 +189,7 @@ public class EditUserActivity extends AppCompatActivity {
         String emailS = textViewEmailEdit.getText().toString();
         String oldUserS = LoginActivity.getUser();
 
-
+       // if(editTextPasOld.getText().toString() != password)
         JSONObject objeto = new JSONObject();
         try {
             objeto.put("email", emailS);
@@ -234,13 +241,17 @@ public class EditUserActivity extends AppCompatActivity {
         botonCancelarBoton.setVisibility(View.GONE);
         //EDITAR DENTRO
         botonEditarBoton.setVisibility(View.VISIBLE);
+        botonPass.setVisibility(View.VISIBLE);
         //DESACTIVANDO EDITAR TEXTO
         textViewNombreEdit.setEnabled(false);
         textViewEmailEdit.setEnabled(false);
         textViewApellidoEdit.setEnabled(false);
         textViewNicknameEdit.setEnabled(false);
     }
-
+    public void cambiarPass(View view){
+        Intent intent = new Intent(this, EditPassActivity.class);
+        startActivity(intent);
+    }
     // Función para separar el nombre y apellidos
     public static String[] separarNombreApellidos(String nombreCompleto) {
         String[] resultado = new String[2];
@@ -270,5 +281,6 @@ public class EditUserActivity extends AppCompatActivity {
 
         return posicionApellido;
     }
+
 }
 
