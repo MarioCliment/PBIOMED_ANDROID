@@ -34,8 +34,8 @@
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="370dp"
-        android:layout_height="531dp"
+        android:layout_width="374dp"
+        android:layout_height="518dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/rounded_frame"
@@ -102,12 +102,12 @@
                 android:hint="Nickname"
                 android:inputType="textEmailAddress"
                 android:paddingLeft="20dp"
-                app:layout_constraintBottom_toTopOf="@+id/editarBotonEditar2"
+                app:layout_constraintBottom_toTopOf="@+id/editarBotonEditar"
                 app:layout_constraintStart_toStartOf="@+id/editTextApellido"
                 app:layout_constraintTop_toBottomOf="@+id/editTextApellido" />
 
             <Button
-                android:id="@+id/editarBotonEditar2"
+                android:id="@+id/editarBotonEditar"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -118,29 +118,33 @@
                 android:textSize="24sp"
                 android:textStyle="normal|bold"
                 app:cornerRadius="25dp"
-                app:layout_constraintBottom_toTopOf="@+id/irACambioContrasenya"
                 app:layout_constraintEnd_toEndOf="@+id/editTextNickname"
                 app:layout_constraintStart_toStartOf="@+id/editTextNickname"
                 app:layout_constraintTop_toBottomOf="@+id/editTextNickname" />
 
             <Button
-                android:id="@+id/irACambioContrasenya"
+                android:id="@+id/cambiarPas"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
                 android:backgroundTint="#024FC9"
-                android:text="Cambiar Contraseña"
+                android:onClick="cambiarPass"
+                android:text="Cambiar contraseña"
                 android:textAllCaps="false"
                 android:textSize="24sp"
                 android:textStyle="normal|bold"
                 app:cornerRadius="25dp"
-                app:layout_constraintBottom_toTopOf="@+id/editButtonCancelar"
-                app:layout_constraintStart_toStartOf="@+id/editarBotonEditar2"
-                app:layout_constraintTop_toBottomOf="@+id/editarBotonEditar2" />
+                app:layout_constraintEnd_toEndOf="@+id/editTextNickname"
+                app:layout_constraintStart_toStartOf="@+id/editTextNickname"
+                app:layout_constraintTop_toBottomOf="@+id/editTextNickname" />
 
             <Button
                 android:id="@+id/editButtonCancelar"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="70dp"
+                android:layout_marginTop="56dp"
+                android:layout_marginEnd="70dp"
                 android:backgroundTint="#FF0000"
                 android:onClick="cancelarEditar"
                 android:text="Cancelar"
@@ -150,14 +154,17 @@
                 android:textStyle="normal|bold"
                 android:visibility="invisible"
                 app:cornerRadius="25dp"
-                app:layout_constraintBottom_toTopOf="@+id/editarBotonGuardar"
-                app:layout_constraintStart_toStartOf="@+id/irACambioContrasenya"
-                app:layout_constraintTop_toBottomOf="@+id/irACambioContrasenya" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editarBotonEditar" />
 
             <Button
                 android:id="@+id/editarBotonGuardar"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="70dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="70dp"
                 android:backgroundTint="#FFFFFF"
                 android:onClick="guardarEditar"
                 android:text="Guardar"
@@ -167,8 +174,8 @@
                 android:textStyle="normal|bold"
                 android:visibility="invisible"
                 app:cornerRadius="25dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/editButtonCancelar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editButtonCancelar" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
