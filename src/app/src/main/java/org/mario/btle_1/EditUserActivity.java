@@ -17,9 +17,9 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 public class EditUserActivity extends AppCompatActivity {
-    //private String server = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest/";
+    private String server = "http://192.168.229.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
 
-    private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; //CASA MAYRO
+    //private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; //CASA MAYRO
 
     private String server_registro = server + "/user/edit";
     Button botonguardar;
@@ -32,8 +32,8 @@ public class EditUserActivity extends AppCompatActivity {
     EditText textViewEmailEdit;
 
     private boolean resultado = false;
-    //private String server_especifico = "http://192.168.45.7:80/PBIOMED_SERVIDOR/src/rest/user/data";
-    private String server_especifico = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/user/data"; //CASA MAYRO
+    private String server_especifico = "http://192.168.229.7:80/PBIOMED_SERVIDOR/src/rest/user/data"; // MOVIL MAYRO
+    //private String server_especifico = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/user/data"; //CASA MAYRO
     //PARA QUE FUNCIONE CANCELAR
     String nombreEditPre = "";
     String nicknameEditPre = "";
