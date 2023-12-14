@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="colorBlue">#024FC9</color> <!-- Un azul claro para ejemplo AAAAAAH SUSTO!!!! -->
+    <color name="colorBlueDark">#024FC9</color> <!-- Un azul más oscuro para la barra de estado -->
 </resources>
+
