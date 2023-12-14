@@ -77,7 +77,9 @@ public class BackgroundJobService extends JobService {
 
     //private String server = "http://192.168.88.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
 
-    private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; // CASA MAYRO
+    //private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; // CASA MAYRO
+
+    private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; //CASA GRASA
 
     private double latitud=1;
     private double longitud=1;

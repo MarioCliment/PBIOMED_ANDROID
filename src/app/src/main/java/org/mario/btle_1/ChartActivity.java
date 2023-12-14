@@ -16,9 +16,7 @@ public class ChartActivity extends AppCompatActivity {
     EditText valorPrueba;
     TextView textView;
     String resultado = "";
-    private String server = "http://192.168.1.133:80/pruebaRESTful/rest/";
 
-    private String server_especifico = server + "hacerLogin.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
