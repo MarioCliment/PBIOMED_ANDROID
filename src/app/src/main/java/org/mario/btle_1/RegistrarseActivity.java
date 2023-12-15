@@ -97,7 +97,6 @@ public class RegistrarseActivity extends AppCompatActivity {
                             resultado = jsonObject.getBoolean("resultado");
                             Log.d("resultado",""+resultado);
                             if (resultado == true){
-                                enviarCorreoVerificacion(emailS);
                                 Log.d("registro","Registrado con éxito");
                                 AlertDialog.Builder registroExitoso = new AlertDialog.Builder(RegistrarseActivity.this);
                                 registroExitoso.setMessage("Se ha registrado con éxito")
@@ -134,45 +133,7 @@ public class RegistrarseActivity extends AppCompatActivity {
                 });
     }
 
-    private void enviarCorreoVerificacion(String destinatario) {
-        Thread thread = new Thread(() -> {
-            try {
-                //SG.e8t10wMnRguFtp5nI_iA0g.p_GYpaagigUXTir6qDeGaR4IjF7LHou_fdFQN-LiNu0Press Ctrl - C to copy MI API CAPULLOS NO LA PASEIS
-                SendGrid sendGrid = new SendGrid("SG.e8t10wMnRguFtp5nI_iA0g.p_GYpaagigUXTir6qDeGaR4IjF7LHou_fdFQN");
-                Request request = new Request();
-                request.setMethod(Method.POST);
-                request.setEndpoint("mail/send");
-                //espero que funcione
 
-                JSONObject personalization = new JSONObject();
-                personalization.put("to", new JSONArray().put(new JSONObject().put("email", destinatario)));
-                personalization.put("subject", "Verificación de correo electrónico");
-
-                JSONObject mailContent = new JSONObject();
-                mailContent.put("type", "text/plain");
-                mailContent.put("value", "Por favor, haga clic en el enlace para verificar su correo electrónico.");
-
-                JSONObject mail = new JSONObject();
-                mail.put("personalizations", new JSONArray().put(personalization));
-                mail.put("from", new JSONObject().put("email", "ignacioya2002@gmail.com"));
-                mail.put("content", new JSONArray().put(mailContent));
-
-                request.setBody(mail.toString());
-
-                Response response = sendGrid.api(request);
-
-                if (response.getStatusCode() == 202) {
-                    Log.d("Correo", "Correo de verificación enviado con éxito");
-                } else {
-                    Log.e("Correo", "Error al enviar el correo de verificación: " + response.getBody());
-                }
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-        });
-
-        thread.start();
-    }
 
     private void IrALoginActivity() {
         startActivity(new Intent(this, LoginActivity.class));
