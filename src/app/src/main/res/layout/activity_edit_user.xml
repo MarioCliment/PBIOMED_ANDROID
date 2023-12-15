@@ -60,8 +60,8 @@
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="374dp"
-        android:layout_height="518dp"
+        android:layout_width="358dp"
+        android:layout_height="522dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="64dp"
         android:layout_marginEnd="16dp"
@@ -87,7 +87,6 @@
                 android:paddingLeft="20dp"
                 app:layout_constraintBottom_toTopOf="@+id/editTextNombre"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -145,6 +144,7 @@
                 android:textSize="24sp"
                 android:textStyle="normal|bold"
                 app:cornerRadius="25dp"
+                app:layout_constraintBottom_toTopOf="@+id/cambiarPas"
                 app:layout_constraintEnd_toEndOf="@+id/editTextNickname"
                 app:layout_constraintStart_toStartOf="@+id/editTextNickname"
                 app:layout_constraintTop_toBottomOf="@+id/editTextNickname" />
@@ -153,7 +153,7 @@
                 android:id="@+id/cambiarPas"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="8dp"
                 android:backgroundTint="#024FC9"
                 android:onClick="cambiarPass"
                 android:text="Cambiar contraseña"
@@ -161,17 +161,16 @@
                 android:textSize="24sp"
                 android:textStyle="normal|bold"
                 app:cornerRadius="25dp"
-                app:layout_constraintEnd_toEndOf="@+id/editTextNickname"
-                app:layout_constraintStart_toStartOf="@+id/editTextNickname"
-                app:layout_constraintTop_toBottomOf="@+id/editTextNickname" />
+                app:layout_constraintBottom_toTopOf="@+id/editButtonCancelar"
+                app:layout_constraintEnd_toEndOf="@+id/editarBotonEditar"
+                app:layout_constraintStart_toStartOf="@+id/editarBotonEditar"
+                app:layout_constraintTop_toBottomOf="@+id/editarBotonEditar" />
 
             <Button
                 android:id="@+id/editButtonCancelar"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="70dp"
-                android:layout_marginTop="56dp"
-                android:layout_marginEnd="70dp"
+                android:layout_marginTop="8dp"
                 android:backgroundTint="#FF0000"
                 android:onClick="cancelarEditar"
                 android:text="Cancelar"
@@ -181,17 +180,16 @@
                 android:textStyle="normal|bold"
                 android:visibility="invisible"
                 app:cornerRadius="25dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editarBotonEditar" />
+                app:layout_constraintBottom_toTopOf="@+id/editarBotonGuardar"
+                app:layout_constraintEnd_toEndOf="@+id/cambiarPas"
+                app:layout_constraintStart_toStartOf="@+id/cambiarPas"
+                app:layout_constraintTop_toBottomOf="@+id/cambiarPas" />
 
             <Button
                 android:id="@+id/editarBotonGuardar"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="70dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="70dp"
+                android:layout_marginTop="8dp"
                 android:backgroundTint="#FFFFFF"
                 android:onClick="guardarEditar"
                 android:text="Guardar"
@@ -201,8 +199,9 @@
                 android:textStyle="normal|bold"
                 android:visibility="invisible"
                 app:cornerRadius="25dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/editButtonCancelar"
+                app:layout_constraintStart_toStartOf="@+id/editButtonCancelar"
                 app:layout_constraintTop_toBottomOf="@+id/editButtonCancelar" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
