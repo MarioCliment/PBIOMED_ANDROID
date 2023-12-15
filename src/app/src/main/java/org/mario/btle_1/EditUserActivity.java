@@ -269,6 +269,10 @@ public class EditUserActivity extends AppCompatActivity {
     }
 
     // Función para encontrar la posición donde comienza el apellido
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // ¡Hola Leo! Soy Gabriel, ¡saluda de vuelta cuando veas esto!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     public static int encontrarPosicionApellido(String nombreCompleto) {
         // Encontramos la posición donde comienza el apellido (primera letra mayúscula después de la primera letra minúscula)
         int longitudNombre = nombreCompleto.length();
@@ -282,6 +286,11 @@ public class EditUserActivity extends AppCompatActivity {
         }
 
         return posicionApellido;
+    }
+
+    public void botorIrMain(View v){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
 }
