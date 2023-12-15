@@ -91,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void botorIrMain(View v){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
     public void falsaSonda(View v){
         ValoresGuardados = new ObjetoDeDosEnteros( 12, 22);
 

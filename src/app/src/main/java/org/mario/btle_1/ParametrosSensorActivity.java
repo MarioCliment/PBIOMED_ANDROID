@@ -291,6 +291,11 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // ¡¡¡Hola Gabriel!!! ¡¡¡Saluda de vuelta!!!
     // HOLA!!!! HOLA GABRIEL!!!!
 
+    public void botorIrMain(View v){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
 
     public void scheduleJob() {
 

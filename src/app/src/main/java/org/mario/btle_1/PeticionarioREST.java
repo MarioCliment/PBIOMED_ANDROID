@@ -167,7 +167,16 @@ public class PeticionarioREST extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean comoFue) {
         // llamado tras doInBackground()
         Log.d("clienterestandroid", "onPostExecute() comoFue = " + comoFue);
-        this.laRespuesta.callback(this.codigoRespuesta, this.cuerpoRespuesta);
+        try {
+            // ¡Seguro que esto lo soluciona!
+            // Gabriel Lituania Dóbilas
+            // 3 de ataque | 5 de vida
+            // Grito de batalla: PLAP PLAP
+            // "¡Amigo del alma, hoy caerás en combate!"
+            this.laRespuesta.callback(this.codigoRespuesta, this.cuerpoRespuesta);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
