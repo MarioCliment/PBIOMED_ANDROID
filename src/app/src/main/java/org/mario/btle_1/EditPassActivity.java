@@ -17,7 +17,9 @@ import org.w3c.dom.Text;
 public class EditPassActivity extends AppCompatActivity {
     //private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; //CASA MAYRO
 
-    private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; //CASA GRASA
+    //private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; //CASA GRASA
+    private String server = "http://192.168.10.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
+
     EditText oldpasstext;
     EditText newpasstext;
     EditText newpasstext2;

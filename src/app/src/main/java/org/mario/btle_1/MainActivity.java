@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
     //private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; // CASA MAYRO
 
-    //private String server = "http://192.168.229.7:80/PBIOMED_SERVIDOR/src/rest"; // MOVIL MAYRO
+    private String server = "http://192.168.10.7:80/PBIOMED_SERVIDOR/src/rest"; // MOVIL MAYRO
 
-    private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; //CASA GRASA
+    //private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; //CASA GRASA
 
 
     private double latitud;
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.webview_map);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webView.loadUrl("https://www.upv.es/plano/plano-2d-en.html");
+        webView.loadUrl("http://192.168.10.7:80/PBIOMED_SERVIDOR/src/ux/mapas.html");
 
         panelButtons = (LinearLayout) findViewById(R.id.panel_buttons);
 

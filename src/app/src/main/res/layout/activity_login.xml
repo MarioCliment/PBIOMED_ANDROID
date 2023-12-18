@@ -20,8 +20,8 @@
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="371dp"
-        android:layout_height="422dp"
+        android:layout_width="352dp"
+        android:layout_height="400dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/rounded_frame"
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="¿Has olvidado tu contraseña?"
-                android:textColor="#232425"
+                android:textColor="#F4F4F4"
                 app:layout_constraintStart_toStartOf="@+id/contrasenya"
                 app:layout_constraintTop_toBottomOf="@+id/contrasenya" />
 

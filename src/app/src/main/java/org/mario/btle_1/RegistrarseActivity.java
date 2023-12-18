@@ -25,10 +25,10 @@ import java.util.Properties;
 
 public class RegistrarseActivity extends AppCompatActivity {
 
-    //private String server = "http://192.168.229.7:80/PBIOMED_SERVIDOR/src/rest"; // MOVIL MAYR0
+    private String server = "http://192.168.10.7:80/PBIOMED_SERVIDOR/src/rest"; // MOVIL MAYR0
     //private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; // CASA MAYRO
 
-    private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; // CASA GRASA
+    //private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; // CASA GRASA
 
     private String server_registro = server + "/user/add";
     private boolean resultado = false;
@@ -99,7 +99,7 @@ public class RegistrarseActivity extends AppCompatActivity {
                             if (resultado == true){
                                 Log.d("registro","Registrado con éxito");
                                 AlertDialog.Builder registroExitoso = new AlertDialog.Builder(RegistrarseActivity.this);
-                                registroExitoso.setMessage("Se ha registrado con éxito")
+                                registroExitoso.setMessage("Se ha registrado con éxito, verifique su correo")
                                         .setCancelable(false)
                                         .setNeutralButton("Entendido", new DialogInterface.OnClickListener() {
                                             @Override

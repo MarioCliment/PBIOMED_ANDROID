@@ -18,6 +18,7 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -92,11 +93,27 @@ public class ParametrosSensorActivity extends AppCompatActivity {
     // Bundle -> onCreate()
     // -------------------------------------------------------------------------
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
-        // MALDICION DE LA SUPRESION!!! bta.enable() puede que de problemitas je!
-        bta.enable();
-        this.elEscanner = bta.getBluetoothLeScanner();
+        if(isBluetoothEnabled()) {
+            BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
+            // MALDICION DE LA SUPRESION!!! bta.enable() puede que de problemitas je!
+            bta.enable();
+            this.elEscanner = bta.getBluetoothLeScanner();
+        } else {
+            AlertDialog.Builder alertaActivarBluetooth = new AlertDialog.Builder(ParametrosSensorActivity.this);
+            alertaActivarBluetooth.setMessage("Para que la app pueda funcionar, necesita el bluetooth activo. Porfavor, active el bluetooth ")
+                    .setCancelable(false)
+                    .setNeutralButton("Entendido", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+            alertaActivarBluetooth.show();
+            requestBluetoothEnable(this);
+        }
+
         setContentView(R.layout.activity_parametros_de_sensor);
 
 
@@ -155,6 +172,22 @@ public class ParametrosSensorActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    // Check if Bluetooth is enabled on the device
+    public static boolean isBluetoothEnabled() {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
+    }
+
+    // Prompt the user to enable Bluetooth if it's not already enabled
+    @SuppressLint("MissingPermission")
+    public static void requestBluetoothEnable(Context context) {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            context.startActivity(enableBtIntent);
+        }
     }
 
     public boolean hayMACVinculada() {
