@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -129,4 +130,140 @@
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView" />
 
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/fondo" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="371dp"
+        android:layout_height="422dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_frame"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/botonLogin"
+                android:layout_width="230dp"
+                android:layout_height="70dp"
+                android:backgroundTint="#024FC9"
+                android:text="Login"
+                android:textAllCaps="false"
+                android:textSize="24sp"
+                android:textStyle="normal|bold"
+                app:cornerRadius="25dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/contrasenya"
+                app:layout_constraintHorizontal_bias="0.494"
+                app:layout_constraintStart_toStartOf="@+id/contrasenya"
+                app:layout_constraintTop_toBottomOf="@+id/contrasenya" />
+
+            <EditText
+                android:id="@+id/usuario"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:ems="10"
+                android:hint="Usuario/Correo"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/contrasenya"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/contrasenya"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:ems="10"
+                android:hint="Contraseña"
+                android:inputType="textPassword"
+                android:paddingLeft="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/botonLogin"
+                app:layout_constraintEnd_toEndOf="@+id/usuario"
+                app:layout_constraintStart_toStartOf="@+id/usuario"
+                app:layout_constraintTop_toBottomOf="@+id/usuario" />
+
+            <TextView
+                android:id="@+id/irRegistrar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="¿No tienes cuenta? Registrate"
+                android:textColor="#232425"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/botonLogin"
+                app:layout_constraintStart_toStartOf="@+id/botonLogin"
+                app:layout_constraintTop_toBottomOf="@+id/botonLogin" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="¿Has olvidado tu contraseña?"
+                android:textColor="#232425"
+                app:layout_constraintStart_toStartOf="@+id/contrasenya"
+                app:layout_constraintTop_toBottomOf="@+id/contrasenya" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="sans-serif"
+        android:text="¡Bienvenido!"
+        android:textColor="#F4F4F4"
+        android:textSize="37sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
+        app:layout_constraintStart_toStartOf="@+id/frameLayout" />
+
+    <Button
+        android:id="@+id/evilButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="botorIrMain"
+        android:text="Modo Invitado"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+>>>>>>> Stashed changes
 </androidx.constraintlayout.widget.ConstraintLayout>
