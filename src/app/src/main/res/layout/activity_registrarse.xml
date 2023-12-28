@@ -5,18 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
+    android:clickable="false"
     tools:context=".MainActivity">
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/fondo" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -32,7 +22,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="497dp">
 
             <EditText
                 android:id="@+id/nombre"
@@ -99,15 +89,25 @@
                 android:hint="Confirmar contraseña*"
                 android:inputType="textPassword"
                 android:paddingLeft="20dp"
-                app:layout_constraintBottom_toTopOf="@+id/botonLogin"
+                app:layout_constraintBottom_toTopOf="@+id/botonRegistrarse"
                 app:layout_constraintEnd_toEndOf="@+id/contrasenya"
                 app:layout_constraintStart_toStartOf="@+id/contrasenya"
                 app:layout_constraintTop_toBottomOf="@+id/contrasenya" />
 
+            <CheckBox
+                android:id="@+id/terminosCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aceptar términos y condiciones"
+                app:layout_constraintBottom_toTopOf="@+id/botonRegistrarse"
+                app:layout_constraintStart_toStartOf="@+id/editTextTextPassword2"
+                app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword2" />
+
             <Button
-                android:id="@+id/botonLogin"
+                android:id="@+id/botonRegistrarse"
                 android:layout_width="230dp"
                 android:layout_height="70dp"
+                android:layout_marginTop="100dp"
                 android:backgroundTint="#024FC9"
                 android:text="Registrarse"
                 android:textAllCaps="false"
@@ -116,10 +116,28 @@
                 app:cornerRadius="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/editTextTextPassword2"
+                app:layout_constraintHorizontal_bias="0.494"
                 app:layout_constraintStart_toStartOf="@+id/editTextTextPassword2"
                 app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword2" />
 
+            <TextView
+                android:id="@+id/terminosTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Términos y condiciones"
+                android:textColor="#0440F6"
+                app:layout_constraintStart_toStartOf="@+id/terminosCheckBox"
+                app:layout_constraintTop_toBottomOf="@+id/terminosCheckBox" />
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/fondo" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

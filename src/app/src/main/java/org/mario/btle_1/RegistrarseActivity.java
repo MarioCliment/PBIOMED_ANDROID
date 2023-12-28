@@ -5,23 +5,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
 import android.util.Log;
 import android.util.Patterns;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
-
-import java.io.IOException;
-import java.util.Properties;
 
 public class RegistrarseActivity extends AppCompatActivity {
 
@@ -41,7 +41,9 @@ public class RegistrarseActivity extends AppCompatActivity {
 
     EditText user;
 
-    Button loginBtn;
+    Button registrarseBtn;
+
+    TextView linkTerminos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +55,34 @@ public class RegistrarseActivity extends AppCompatActivity {
         user = findViewById(R.id.nickname);
         nombre = findViewById(R.id.nombre);
         password = findViewById(R.id.contrasenya);
-        loginBtn = findViewById(R.id.botonLogin);
+        registrarseBtn = findViewById(R.id.botonRegistrarse);
+        linkTerminos = findViewById(R.id.terminosTextView);
 
-        loginBtn.setOnClickListener(v->registrarUsuario());
+        registrarseBtn.setOnClickListener(v->registrarUsuario());
+        linkTerminos.setOnClickListener(v->abrirTerminos());
+
+        // Supongamos que tienes un CheckBox para los términos y condiciones y un Button para el registro
+        CheckBox checkBoxTerminos = findViewById(R.id.terminosCheckBox);
+        Button buttonRegistrarse = findViewById(R.id.botonRegistrarse);
+
+        // Inicialmente, deshabilita el botón de registro
+        buttonRegistrarse.setEnabled(false);
+        buttonRegistrarse.setBackgroundColor(Color.GRAY);
+
+        // Establece un listener en el checkbox
+        checkBoxTerminos.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Habilita el botón de registro solo si los términos y condiciones están marcados
+                buttonRegistrarse.setEnabled(isChecked);
+                if(isChecked) {
+                    buttonRegistrarse.setBackgroundColor(Color.BLUE);
+                } else {
+                    buttonRegistrarse.setBackgroundColor(Color.GRAY);
+                }
+            }
+        });
+
     }
 
     public void registrarUsuario() {
@@ -64,6 +91,12 @@ public class RegistrarseActivity extends AppCompatActivity {
         if (validateData(email, password, this.editTextTextPassword2.getText().toString())) {
             hacerRegistro();
         }
+    }
+    private void abrirTerminos() {
+        String url = "https://terminosycondicionesdeusoejemplo.com/";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 
     void hacerRegistro(){
