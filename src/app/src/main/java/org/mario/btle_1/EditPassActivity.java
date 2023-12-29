@@ -30,7 +30,7 @@ public class EditPassActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        oldpassword = LoginActivity.getPassword();
+        oldpassword = LoginActivity.getPassword(); // ... esto coge un valor vacio
         oldpasstext = findViewById(R.id.OldPass);
         newpasstext = findViewById(R.id.NewPass);
         newpasstext2 = findViewById(R.id.NewPass2);

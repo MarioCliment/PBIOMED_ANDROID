@@ -26,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private String server_especifico = server + "/user/login";
     private static String usuarioGlobal;
-    private static String passwordGlobal;
+    private static String passwordGlobal; // este valor nunca se le es asignado nada
     private boolean resultado = false;
     EditText password;
     EditText user;
