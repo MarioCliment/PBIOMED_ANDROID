@@ -98,7 +98,7 @@
                 android:id="@+id/terminosCheckBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Aceptar términos y condiciones"
+                android:text="Aceptar"
                 app:layout_constraintBottom_toTopOf="@+id/botonRegistrarse"
                 app:layout_constraintStart_toStartOf="@+id/editTextTextPassword2"
                 app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword2" />
@@ -124,10 +124,12 @@
                 android:id="@+id/terminosTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Términos y condiciones"
+                android:layout_marginStart="4dp"
+                android:text="términos y condiciones"
                 android:textColor="#0440F6"
-                app:layout_constraintStart_toStartOf="@+id/terminosCheckBox"
-                app:layout_constraintTop_toBottomOf="@+id/terminosCheckBox" />
+                app:layout_constraintBottom_toBottomOf="@+id/terminosCheckBox"
+                app:layout_constraintStart_toEndOf="@+id/terminosCheckBox"
+                app:layout_constraintTop_toTopOf="@+id/terminosCheckBox" />
 
             <ImageView
                 android:id="@+id/imageView5"
