@@ -20,18 +20,14 @@ public class EditPassActivity extends AppCompatActivity {
     //private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; //CASA GRASA
     private String server = "http://192.168.10.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
 
-    EditText oldpasstext;
     EditText newpasstext;
     EditText newpasstext2;
     TextView avisoPass;
-    String oldpassword;
     private boolean resultado = false;
     private String server_registro = server + "/user/password";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        oldpassword = LoginActivity.getPassword();
-        oldpasstext = findViewById(R.id.OldPass);
         newpasstext = findViewById(R.id.NewPass);
         newpasstext2 = findViewById(R.id.NewPass2);
         avisoPass = findViewById(R.id.avisoPass);
@@ -43,7 +39,7 @@ public class EditPassActivity extends AppCompatActivity {
     }
     public void guardarPass(View view){
         if(newpasstext.getText() == newpasstext2.getText()){
-            if(oldpasstext.getText().toString() == oldpassword){
+            if(true){ // aqui antes ponia ''oldpasstext.getText().toString() == oldpassword'', pero ya no usamos "oldpassword"
                 JSONObject objeto = new JSONObject();
                 try {
                     objeto.put("contrasenya", newpasstext.getText().toString());
@@ -82,7 +78,7 @@ public class EditPassActivity extends AppCompatActivity {
                             }
                         });
             }
-            else{
+            else{ // este else no deberia ocurrir nunca jamas
                 avisoPass.setText("Contraseña incorrecta");
                 avisoPass.setVisibility(View.VISIBLE);
                 avisoPass.setTextColor(Color.parseColor("#C62222"));

@@ -93,7 +93,7 @@ public class RegistrarseActivity extends AppCompatActivity {
         }
     }
     private void abrirTerminos() {
-        String url = "https://terminosycondicionesdeusoejemplo.com/";
+        String url = "https://wordpress.com/page/ignacius12.wordpress.com/6";
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);
