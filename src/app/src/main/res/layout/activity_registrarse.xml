@@ -8,6 +8,17 @@
     android:clickable="false"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/imageViewFondoRegistro"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/fondo" />
+
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="370dp"
@@ -107,7 +118,7 @@
                 android:id="@+id/botonRegistrarse"
                 android:layout_width="230dp"
                 android:layout_height="70dp"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="60dp"
                 android:backgroundTint="#024FC9"
                 android:text="Registrarse"
                 android:textAllCaps="false"
@@ -130,13 +141,6 @@
                 app:layout_constraintBottom_toBottomOf="@+id/terminosCheckBox"
                 app:layout_constraintStart_toEndOf="@+id/terminosCheckBox"
                 app:layout_constraintTop_toTopOf="@+id/terminosCheckBox" />
-
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:scaleType="fitXY"
-                app:srcCompat="@drawable/fondo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
