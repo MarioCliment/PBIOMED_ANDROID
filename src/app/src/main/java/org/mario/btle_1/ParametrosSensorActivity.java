@@ -630,13 +630,13 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                     byte[] bytes = resultado.getScanRecord().getBytes();
                     TramaIBeacon tib = new TramaIBeacon(bytes);
                     // TODO: Cambiar este getTxPower por algo que realmente demuestre la distancia al sensor
-                    if (tib.getTxPower() > 60) {
-                        resultadoCercania = 3; // cerca
-                    } if (tib.getTxPower() > 30) {
-                        resultadoCercania = 2; // medio
+                    Log.d(TAG, " RSSI " +resultado.getRssi()+" TxPower "+ tib.getTxPower());
+                    if (calcularDistancia(resultado.getRssi(), tib.getTxPower())<2) {
+                        resultadoCercania = 2; // cerca
                     } else {
-                        resultadoCercania = 1; // lejos
+                        resultadoCercania = 1;// lejos
                     }
+                    Log.d(TAG, " RSSI calculos " +calcularDistancia(resultado.getRssi(), tib.getTxPower()));
 
                 } else {
                     Log.d(TAG, " buscarEsteDispositivoBTLE(): dispositivo no encontrado");
@@ -736,21 +736,28 @@ public class ParametrosSensorActivity extends AppCompatActivity {
                 localizarTextView.setText("Fallo en escaneo");
                 break;
             case 0:
-                localizarTextView.setText("Fuera de rango");
+                localizarTextView.setText("Buscando...");
                 break;
             case 1:
                 localizarTextView.setText("Lejos");
                 break;
             case 2:
-                localizarTextView.setText("Medio");
-                break;
-            case 3:
                 localizarTextView.setText("Cerca");
                 break;
         }
     }
 
+    private float calcularDistancia(float rssi, float txPower) {
+        //El txpower es el que ponemos en el arduino
+        //float txPower = txPower; // Potencia de transmisión (RSSI a 1 metro de distancia)
 
+        //n=2 para un entorno de línea de visión directa y sin obstáculos significativos.
+        //n=2.7 para un entorno típico de oficina con paredes y obstáculos moderados.
+        //n=3  para entornos industriales o áreas con muchos obstáculos.
+        float n = 2.5F; // Factor de atenuación (puede variar según el entorno)
+
+        return (float) Math.pow(10, (txPower - rssi) / (10 * n));
+    }
 }
 
 
