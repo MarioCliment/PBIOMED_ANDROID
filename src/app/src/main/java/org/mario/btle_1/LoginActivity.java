@@ -34,6 +34,8 @@ public class LoginActivity extends AppCompatActivity {
     Button skipLoginBtn;
 
     TextView registrar;
+    TextView hasOlvidadoText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +46,11 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn = findViewById(R.id.botonRegistrarse);
         skipLoginBtn = findViewById(R.id.evilButton);
         registrar = findViewById(R.id.irRegistrar);
+        hasOlvidadoText = findViewById(R.id.olvidarContrasenyaTextView);
 
         loginBtn.setOnClickListener(v -> hacerLogin());
         skipLoginBtn.setOnClickListener(v -> irMainActivity());
+        hasOlvidadoText.setOnClickListener(v -> irHasOlvidado());
 
 
         TextView textView = findViewById(R.id.irRegistrar);
@@ -123,6 +127,9 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(new Intent(this, RegistrarseActivity.class));
     }
 
+    void irHasOlvidado() {
+        startActivity(new Intent(this, EditPassActivity.class));
+    }
     public static String getUser() {
         return usuarioGlobal;
     }
