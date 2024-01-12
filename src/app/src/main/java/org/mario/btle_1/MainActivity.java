@@ -82,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void botonIrLarva(View v) {
+        Intent intent = new Intent(this, Dato2Activity.class);
+        startActivity(intent);
+    }
+
     public void botonIrATorty(View v) {
         Intent intent = new Intent(this, TortyActivity.class);
         startActivity(intent);
