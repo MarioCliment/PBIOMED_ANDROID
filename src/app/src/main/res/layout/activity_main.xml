@@ -15,13 +15,6 @@
     </WebView>
 
     <Button
-        android:id="@+id/larva"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="falsaSonda"
-        android:text="Button" />
-
-    <Button
         android:id="@+id/button_menu"
         android:layout_width="80dp"
         android:layout_height="80dp"
@@ -95,6 +88,21 @@
             android:paddingRight="10dp"
             android:paddingBottom="10dp"
             app:cornerRadius="25dp"            app:icon="@drawable/info_icon"
+            app:iconSize="50dp" />
+
+        <Button
+            android:id="@+id/larva"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:backgroundTint="#024FC9"
+            android:onClick="botonIrLarva"
+            android:padding="15dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            app:cornerRadius="25dp"
+            app:icon="@drawable/grafico"
             app:iconSize="50dp" />
 
     </LinearLayout>

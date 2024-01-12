@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,8 +20,8 @@ public class Dato2Activity extends AppCompatActivity {
     private String server_temperatura = server + "/user/measure/last/temp";
     private String server_ozono = server + "/user/measure/last/ozo";
 
-    EditText temp;
-    EditText hum;
+    TextView temp;
+    TextView hum;
 
 
 
