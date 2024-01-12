@@ -18,6 +18,6 @@ public class LarvaActivity extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.invitado);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webView.loadUrl("https://www.upv.es/plano/plano-2d-en.html");
+        webView.loadUrl("http://172.20.10.2:80/PBIOMED_SERVIDOR/src/ux/mapas.html");
     }
 }

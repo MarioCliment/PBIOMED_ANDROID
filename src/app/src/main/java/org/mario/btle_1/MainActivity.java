@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     //private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; // CASA MAYRO
 
-    private String server = "http://192.168.10.7:80/PBIOMED_SERVIDOR/src/rest"; // MOVIL MAYRO
+    private String server = "http://172.20.10.2:80/PBIOMED_SERVIDOR/src/rest"; // MOVIL MAYRO
 
     //private String server = "http://192.168.1.148:80/PBIOMED_SERVIDOR/src/rest"; //CASA GRASA
 
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.webview_map);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webView.loadUrl("http://192.168.10.7:80/PBIOMED_SERVIDOR/src/ux/mapas.html");
+        webView.loadUrl("http://172.20.10.2:80/PBIOMED_SERVIDOR/src/ux/mapas.html");
 
         panelButtons = (LinearLayout) findViewById(R.id.panel_buttons);
 

@@ -14,7 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class EditUserActivity extends AppCompatActivity {
-    private String server = "http://192.168.10.7:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
+    private String server = "http://172.20.10.2:80/PBIOMED_SERVIDOR/src/rest"; //MOVIL MAYRO
 
     //private String server = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest"; //CASA MAYRO
 
@@ -38,7 +38,7 @@ public class EditUserActivity extends AppCompatActivity {
 
 
     private boolean resultado = false;
-    private String server_especifico = "http://192.168.229.7:80/PBIOMED_SERVIDOR/src/rest/user/data"; // MOVIL MAYRO
+    private String server_especifico = "http://172.20.10.2:80/PBIOMED_SERVIDOR/src/rest/user/data"; // MOVIL MAYRO
     //private String server_especifico = "http://192.168.1.140:80/PBIOMED_SERVIDOR/src/rest/user/data"; //CASA MAYRO
     //PARA QUE FUNCIONE CANCELAR
     String nombreEditPre = "";
