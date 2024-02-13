@@ -12,28 +12,14 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="1dp" >
 
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_x="32dp"
+            android:layout_y="33dp"
+            android:text="Button" />
     </WebView>
-
-    <Button
-        android:id="@+id/button_menu"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="#024FC9"
-        android:elevation="6dp"
-        android:padding="15dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        app:cornerRadius="25dp"
-        app:icon="@drawable/menu_icon"
-        app:iconPadding="0dp"
-        app:iconSize="50dp"
-        app:iconTint="#FFFFFF" />
 
     <LinearLayout
         android:id="@+id/panel_buttons"
@@ -96,6 +82,21 @@
             android:layout_height="80dp"
             android:backgroundTint="#024FC9"
             android:onClick="botonIrLarva"
+            android:padding="15dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            app:cornerRadius="25dp"
+            app:icon="@drawable/grafico"
+            app:iconSize="50dp" />
+
+        <Button
+            android:id="@+id/larva2"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:backgroundTint="#024FC9"
+            android:onClick="falsaSonda"
             android:padding="15dp"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
