@@ -1,67 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/botonBuscarDispositivosBTLE"
-        android:text="Buscar Dispositivos BTLE nou 4"
-        android:onClick="botonBuscarDispositivosBTLEPulsado"
+    <WebView
+        android:id="@+id/webview_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="1dp" >
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_x="32dp"
+            android:layout_y="33dp"
+            android:text="Button" />
+    </WebView>
+
+    <LinearLayout
+        android:id="@+id/panel_buttons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />
+        android:layout_below="@id/button_menu"
+        android:layout_marginEnd="10dp"
+        android:layout_alignParentEnd="true"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
 
-    <Button
-        android:id="@+id/botonDetenerBusquedaDispositivosBTLE"
-        android:text="Detener búsaqueda Dispositivos BTLE"
-        android:onClick="botonDetenerBusquedaDispositivosBTLEPulsado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        <Button
+            android:id="@+id/botonMainIrEditar"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:backgroundTint="#024FC9"
+            android:onClick="botonAEditar"
+            android:padding="15dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            app:cornerRadius="25dp"
+            app:icon="@drawable/user_icon"
+            app:iconSize="50dp" />
 
-    <Button
-        android:id="@+id/botonBuscarNuestroDispositivoBTLE"
-        android:text="Buscar nuestro dispositivo  BTLE"
-        android:onClick="botonBuscarNuestroDispositivoBTLEPulsado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        <Button
+            android:id="@+id/botonMainIrParametros"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:backgroundTint="#024FC9"
+            android:onClick="botonIrParametrosSensor"
+            android:padding="15dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            app:cornerRadius="25dp"            app:icon="@drawable/options_icon"
+            app:iconSize="50dp" />
 
-    <TextView
-        android:id="@+id/datosBluetoothNombre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/botonMainIrInformacion"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:backgroundTint="#024FC9"
+            android:onClick="botonIrATorty"
+            android:padding="15dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            app:cornerRadius="25dp"            app:icon="@drawable/info_icon"
+            app:iconSize="50dp" />
 
-    <TextView
-        android:id="@+id/datosBluetoothMajor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/larva"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:backgroundTint="#024FC9"
+            android:onClick="botonIrLarva"
+            android:padding="15dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            app:cornerRadius="25dp"
+            app:icon="@drawable/grafico"
+            app:iconSize="50dp" />
 
-    <TextView
-        android:id="@+id/datosBluetoothMinor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/larva2"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:backgroundTint="#024FC9"
+            android:onClick="falsaSonda"
+            android:padding="15dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            app:cornerRadius="25dp"
+            app:icon="@drawable/grafico"
+            app:iconSize="50dp" />
 
-    <TextView
-        android:id="@+id/scaneoStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="scaneoStatus" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SERVIDOR" />
+</RelativeLayout>
 
-    <TextView
-        android:id="@+id/elTexto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="MensajeServidor" />
-
-</android.widget.LinearLayout>
